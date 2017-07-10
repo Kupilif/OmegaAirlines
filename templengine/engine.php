@@ -1,7 +1,5 @@
 <?php
 
-include 'data.php';
-
 class TemplatesEngine
 {
 	const FILES_PATTERN = '/{FILE=\"(.+)\"}/imsU';

@@ -1,15 +1,6 @@
 <?php
-include 'templengine/manager.php';
-
-/* Вывод сообщения об ошибке */
-function PrintMessage($messg)
-{
-	$res = "<div align=center>";
-	$res .= "<p>" . $messg . "</p>";
-	$res .= "<a href=\"index.php?page=questions\"><button>Назад</button></a>";
-	$res .= "</div>";
-	echo $res;
-}
+include_once 'templengine/manager.php';
+include_once 'templengine/generator.php';
 
 /* Подключение к базе данных */
 function ConnectToDatabase()
@@ -74,12 +65,14 @@ function SaveNewResultsToDatabase($results, $questions, $db)
 	}
 }
 
-$questions = CTemplatesManager::GetQuestionNames(); 
+$manager = new TemplatesManager();
+$questions = $manager->GetQuestionNames(); 
 
 $database = ConnectToDatabase();
 if ($database == null)
 {
-	PrintMessage("Не удалось подключиться к базе данных!");
+	$generator = new PageGenerator();
+	echo $generator->GetErrorPage('Не удалось подключиться к базе данных!', 'index.php?page=questions');
 	exit(1);
 }
 
@@ -91,7 +84,7 @@ for ($i = 0; $i < count($questions); $i++)
 SaveNewResultsToDatabase($results, $questions, $database);
 
 session_start();
-if (CTemplatesManager::IsUserAuthorized())
+if ($manager->IsUserAuthorized())
 {
 	$database->query("UPDATE `users` SET `vote` = 1 WHERE BINARY `login` = '" . $_SESSION['username'] . "'");
 }

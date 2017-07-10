@@ -135,4 +135,16 @@ class TemplatesData
 		4 => 'service',
 		5 => 'site'
 	);
+	
+	public static $page_404 = array (
+		'NOT_FOUND_IMG' => 'images/404.png',
+		'TEXT' => 'Запрашиваемая Вами страница не найдена!',
+		'TITLE' => '404',
+		'PAGE_NUM' => '100',
+	);
+	
+	public static $error_page = array (
+		'TITLE' => 'Ошибка',
+		'PAGE_NUM' => '100',
+	);
 }

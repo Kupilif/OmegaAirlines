@@ -1,15 +1,6 @@
 <?php
-include 'templengine/manager.php';
-
-/* Вывод сообщения об ошибке */
-function PrintMessage($messg)
-{
-	$res = "<div align=center>";
-	$res .= "<p>" . $messg . "</p>";
-	$res .= "<a href=\"index.php?page=authorization\"><button>Назад</button></a>";
-	$res .= "</div>";
-	echo $res;
-}
+include_once 'templengine/manager.php';
+include_once 'templengine/generator.php';
 
 /* Проверка, совпадают ли пароли */
 function IsPasswordCorrect($passwd1, $passwd2)
@@ -87,8 +78,9 @@ function SendMail($address, $code)
 function AddNewUser($login, $email, $passwd, $db)
 {
 	$encpasswd = sha1($passwd);
-	$hash = CTemplatesManager::GetHashCode();
-	$code = CTemplatesManager::GetHashCode();
+	$manager = new TemplatesManager();
+	$hash = $manager->GetHashCode();
+	$code = $manager->GetHashCode();
 	
 	if (!SendMail($email, $code))
 	{
@@ -116,28 +108,32 @@ $passwdrepeat = $_POST["passwdrepeat"];
 
 if (!IsPasswordCorrect($passwd, $passwdrepeat))
 {
-	PrintMessage("Пароли не совпадают!");
+	$generator = new PageGenerator();
+	echo $generator->GetErrorPage('Пароли не совпадают!', 'index.php?page=authorization');
 	exit(1);
 }
 
 $database = ConnectToDatabase();
 if ($database == null)
 {
-	PrintMessage("Не удалось подключиться к базе данных!");
+	$generator = new PageGenerator();
+	echo $generator->GetErrorPage('Не удалось подключиться к базе данных!', 'index.php?page=authorization');
 	exit(1);
 }
 
 if (IsUserAlreadyExistsByLogin($login, $database))
 {
-	PrintMessage("Пользователь с таким логином уже существует!");
 	$database->close();
+	$generator = new PageGenerator();
+	echo $generator->GetErrorPage('Пользователь с таким логином уже существует!', 'index.php?page=authorization');
 	exit(1);
 }
 
 if (IsUserAlreadyExistsByEMail($email, $database))
 {
-	PrintMessage("Пользователь с таким e-mail уже существует!");
 	$database->close();
+	$generator = new PageGenerator();
+	echo $generator->GetErrorPage('Пользователь с таким e-mail уже существует!', 'index.php?page=authorization');
 	exit(1);
 }
 
@@ -148,7 +144,8 @@ if (AddNewUser($login, $email, $passwd, $database))
 }
 else
 {
-	PrintMessage("Указан неверный email!");
 	$database->close();
+	$generator = new PageGenerator();
+	echo $generator->GetErrorPage('Указан неверный email!', 'index.php?page=authorization');
 }
 

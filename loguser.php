@@ -1,15 +1,6 @@
 <?php
-include 'templengine/manager.php';
-
-/* Вывод сообщения об ошибке */
-function PrintMessage($messg)
-{
-	$res = "<div align=center>";
-	$res .= "<p>" . $messg . "</p>";
-	$res .= "<a href=\"index.php?page=authorization\"><button>Назад</button></a>";
-	$res .= "</div>";
-	echo $res;
-}
+include_once 'templengine/manager.php';
+include_once 'templengine/generator.php';
 
 function GetBrowserName($str)
 {
@@ -75,7 +66,8 @@ function IsUserInDatabase($login, $passwd, $db, &$hash)
 			$encpasswd = sha1($passwd);
 			if ($dbencpasswd == $encpasswd)
 			{
-				$newHash = TemplatesManager::GetHashCode();
+				$manager = new TemplatesManager();
+				$newHash = $manager->GetHashCode();
 				$db->query("UPDATE `users` SET `hash` = '" . $newHash ."' WHERE BINARY `login` = '" . $login . "' OR `email` = '" . $login . "'");
 				$hash = $newHash;
 				
@@ -160,7 +152,8 @@ else
 
 if (IsUserRobot())
 {
-	PrintMessage("Вы – робот!");
+	$generator = new PageGenerator();
+	echo $generator->GetErrorPage('Вы – робот!', 'index.php?page=authorization');
 	exit(1);
 }
 
@@ -183,7 +176,8 @@ if (IsUserInDatabase($login, $passwd, $database, $hash))
 }
 else
 {
-	PrintMessage("Неверное имя пользователя или пароль!");
+	$generator = new PageGenerator();
+	echo $generator->GetErrorPage('Неверное имя пользователя или пароль!', 'index.php?page=authorization');
 }
 
 $database->close();

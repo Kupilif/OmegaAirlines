@@ -1,16 +1,6 @@
 <?php
-
-include 'templengine/manager.php';
-
-/* Вывод сообщения об ошибке */
-function PrintMessage($messg)
-{
-	$res = "<div align=center>";
-	$res .= "<p>" . $messg . "</p>";
-	$res .= "<a href=\"index.php?page=authorization\"><button>Назад</button></a>";
-	$res .= "</div>";
-	echo $res;
-}
+include_once 'templengine/manager.php';
+include_once 'templengine/genrator.php';
 
 function IsCodeValid($code, $db)
 {
@@ -27,7 +17,8 @@ function IsCodeValid($code, $db)
 
 session_start();
 
-$database = CTemplatesManager::ConnectToDatabase();
+$manager = new TemplatesManager();
+$database = $manager->ConnectToDatabase();
 if ($database == null)
 {
 	PrintMessage("Не удалось подключиться к базе данных!");
@@ -43,6 +34,7 @@ if (IsCodeValid($_POST['code'], $database))
 }
 else
 {
-	PrintMessage('Неверный код активации!');
 	$database->close();
+	$generator = new PageGenerator();
+	echo $generator->GetErrorPage('Неверный код активации!', 'index.php?page=authorization');
 }

@@ -1,16 +1,6 @@
 <?php
-
-include 'templengine/manager.php';
-
-/* Вывод сообщения об ошибке */
-function PrintMessage($messg)
-{
-	$res = "<div align=center>";
-	$res .= "<p>" . $messg . "</p>";
-	$res .= "<a href=\"index.php?page=authorization\"><button>Назад</button></a>";
-	$res .= "</div>";
-	echo $res;
-}
+include_once 'templengine/manager.php';
+include_once 'templengine/generator.php';
 
 function SendMail($address, $code)
 {
@@ -21,15 +11,16 @@ function SendMail($address, $code)
 }
 
 session_start();
-
-$database = CTemplatesManager::ConnectToDatabase();
+$manager = new TemplatesManager();
+$database = $manager->ConnectToDatabase();
 if ($database == null)
 {
-	PrintMessage("Не удалось подключиться к базе данных!");
+	$generator = new PageGenerator();
+	echo $generator->GetErrorPage('Не удалось подключиться к базе данных!', 'index.php?page=authorization');
 	exit(1);
 }
 
-$code = CTemplatesManager::GetHashCode();
+$code = $manager->GetHashCode();
 $database->query("UPDATE `users` SET `activation` = '" . $code ."' WHERE BINARY `login` = '" . $_SESSION['username'] . "'");
 SendMail($_SESSION['email'], $code);
 $database->close();

@@ -1,7 +1,7 @@
 <?php
 
-include 'manager.php';
-include 'engine.php';
+include_once 'manager.php';
+include_once 'engine.php';
 
 class PageGenerator
 {
@@ -18,6 +18,14 @@ class PageGenerator
 		$manager = new TemplatesManager();
 		$engine = new TemplatesEngine();
 		$manager->GetPageInfo('index', $pagePath, $pageData, $commonData);
+		return $engine->GetPage($pagePath, $pageData, $commonData);
+	}
+	
+	public function GetErrorPage($message, $link)
+	{
+		$manager = new TemplatesManager();
+		$engine = new TemplatesEngine();
+		$manager->GetErrorPageInfo($message, $link, $pagePath, $pageData, $commonData);
 		return $engine->GetPage($pagePath, $pageData, $commonData);
 	}
 }

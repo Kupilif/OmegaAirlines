@@ -1,8 +1,10 @@
 <?php
 
+include_once 'data.php';
+
 class TemplatesManager
 {	
-	public static function GetHashCode($length = 10)
+	public function GetHashCode($length = 10)
 	{
 		$chars = 'ABCDEFGHIJKLMNOPQRSTYVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ';
 		$charslen = strlen($chars) - 1;
@@ -16,9 +18,18 @@ class TemplatesManager
 		return sha1($code);
 	}
 	
-	public static function GetQuestionNames()
+	public function GetQuestionNames()
 	{
 		return TemplatesData::$question_names;
+	}
+	
+	public function GetErrorPageInfo($message, $link, &$pagePath, &$pageData, &$commonData)
+	{
+		$pagePath = $_SERVER['DOCUMENT_ROOT'] . '/oa.com/templates/error.tpl';
+		$pageData = TemplatesData::$error_page;
+		$pageData['MESSAGE'] = $message;
+		$pageData['LINK'] = $link;
+		$commonData = $this->GetCommonData();
 	}
 	
 	public function GetPageInfo($pageName, &$pagePath, &$pageData, &$commonData)
@@ -43,38 +54,38 @@ class TemplatesManager
 				break;
 			case 'documents':
 				$pagePath = 'templates/documents.tpl';
-				$pageData = self::GetDataForDocumentsPage();
+				$pageData = $this->GetDataForDocumentsPage();
 				break;
 			case 'questions':
 				$pagePath = 'templates/questions.tpl';
-				$pageData = self::GetQuestinnaire();
+				$pageData = $this->GetQuestinnaire();
 				break;
 			case 'questionsres':
 				$pagePath = 'templates/questions.tpl';
-				$pageData = self::GetResultsOfQuestinnaire();
+				$pageData = $this->GetResultsOfQuestinnaire();
 				break;
 			case 'currency':
 				$pagePath = 'templates/currency.tpl';
-				$pageData = self::GetDataForCurrencyPage();
+				$pageData = $this->GetDataForCurrencyPage();
 				break;
 			case 'authorization':
 				$pagePath = 'templates/authorization.tpl';
-				$pageData = self::GetDataForAuthorizationPage();
+				$pageData = $this->GetDataForAuthorizationPage();
 				break;
 			default:
-				$pagePath = 'templates/index.tpl';
-				$pageData = self::$data_index;
+				$pagePath = 'templates/notfound.tpl';
+				$pageData = TemplatesData::$page_404;
 		}
 		
 		$pagePath = $_SERVER['DOCUMENT_ROOT'] . '/oa.com/' . $pagePath;
-		$commonData = self::GetCommonData();
+		$commonData = $this->GetCommonData();
 	}
 	
 	private function GetCommonData()
 	{
 		$data = TemplatesData::$data_comon;
 		
-		if ( (self::IsUserAuthorized()) )
+		if ( ($this->IsUserAuthorized()) )
 		{
 			$data['AUTHORIZATION_PAGE_NAME'] = $_SESSION['username'];
 			if (!$_SESSION['isUserActivated'])
@@ -96,7 +107,7 @@ class TemplatesManager
 	{
 		$data['PAGE_NUM'] = '8';
 		
-		if ( self::IsUserAuthorized() )
+		if ( $this->IsUserAuthorized() )
 		{
 			$data['TITLE'] = $_SESSION['username'];
 			$data['USERNAME'] = $_SESSION['username'];
@@ -120,7 +131,7 @@ class TemplatesManager
 		return $data;
 	}
 	
-	public static function IsUserAuthorized()
+	public function IsUserAuthorized()
 	{
 		if ( ((isset($_SESSION['isUserLogged'])) && ($_SESSION['isUserLogged'] == true)) )
 		{
@@ -128,7 +139,7 @@ class TemplatesManager
 		}
 		else
 		{
-			return (self::IsAuthorisationInCookies());
+			return ($this->IsAuthorisationInCookies());
 		}
 	}
 	
@@ -140,7 +151,7 @@ class TemplatesManager
 		}
 			
 		$savedHash = $_COOKIE['oaAuth'];
-		$database = self::ConnectToDatabase();
+		$database = $this->ConnectToDatabase();
 		if ($database == null)
 		{
 			
@@ -167,7 +178,7 @@ class TemplatesManager
 		$_SESSION['username'] = $elems['login'];
 		$_SESSION['email'] = $elems['email'];
 		$_SESSION['isUserActivated'] = ($elems['activation'] == 'ACTIVATED');
-		self::UpdateHash($elems['login'], $database);
+		$this->UpdateHash($elems['login'], $database);
 		$database->close();
 		
 		return true;
@@ -175,7 +186,7 @@ class TemplatesManager
 	
 	private function UpdateHash($login, $db)
 	{
-		$newHash = self::GetHashCode();
+		$newHash = $this->GetHashCode();
 		$db->query("UPDATE `users` SET `hash` = '" . $newHash ."' WHERE BINARY `login` = '" . $login . "'");
 		setcookie('oaAuth', $newHash, time() + 30 * 24* 60 * 60);
 	}
@@ -194,13 +205,13 @@ class TemplatesManager
 		$data['COL4_NAME'] = 'Официальный курс, BYN';
 		$data['CUR_DATE'] = $curDay;
 		$data['PREV_DATE'] = $prevDay;
-		$data['CUR_DATE_CURRENCY'] = self::GetCurrencyForDate($curDay);
-		$data['PREV_DATE_CURRENCY'] = self::GetCurrencyForDate($prevDay);
+		$data['CUR_DATE_CURRENCY'] = $this->GetCurrencyForDate($curDay);
+		$data['PREV_DATE_CURRENCY'] = $this->GetCurrencyForDate($prevDay);
 	
 		return $data;
 	}
 	
-	private  function GetCurrencyForDate($date)
+	private function GetCurrencyForDate($date)
 	{
 		$link = "http://www.nbrb.by/API/ExRates/Rates?Periodicity=0&onDate=" . $date;
 		
@@ -253,14 +264,14 @@ class TemplatesManager
 	{
 		$data['TITLE'] = 'Документы';
 		$data['PAGE_NUM'] = '5';
-		$data['FILES'] = self::GetFilesList();
+		$data['FILES'] = $this->GetFilesList();
 	
 		return $data;
 	}
 	
 	private function IsUserAlreadyVote()
 	{
-		$db = self::ConnectToDatabase();
+		$db = $this->ConnectToDatabase();
 		if ($db == null)
 		{
 			return false;
@@ -292,9 +303,9 @@ class TemplatesManager
 	
 	private function GetQuestinnaire()
 	{
-		if (self::IsUserAlreadyVote())
+		if ($this->IsUserAlreadyVote())
 		{
-			return self::GetResultsOfQuestinnaire();
+			return $this->GetResultsOfQuestinnaire();
 		}
 		else
 		{
@@ -308,12 +319,12 @@ class TemplatesManager
 		$res['TITLE'] = 'Результаты';
 		$res['ACTION'] = '2';
 		
-		$database = self::ConnectToDatabase();
+		$database = $this->ConnectToDatabase();
 		if ($database != null)
 		{
 			for ($i = 1; $i <= count(TemplatesData::$question_names); $i++)
 			{
-				self::LoadAnswersFromDatabase(TemplatesData::$question_names[$i - 1], $i, $res, $database);
+				$this->LoadAnswersFromDatabase(TemplatesData::$question_names[$i - 1], $i, $res, $database);
 			}
 			$database->close();
 		}
@@ -321,7 +332,7 @@ class TemplatesManager
 		return $res;
 	}
 	
-	public static function ConnectToDatabase()
+	public function ConnectToDatabase()
 	{
 		$database = new mysqli('localhost', 'root', '2019755', 'site');
 		if ($database != null)
