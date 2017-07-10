@@ -353,10 +353,10 @@ class CTemplatesManager
 		{
 			$res = '<table class="currency_table" width={CONFIG="CURRENCY_TABLE_WIDTH"} align="{CONFIG="CURRENCY_TABLE_ALIGN"}">';
 			$res .= '<tr class="caption" align="{CONFIG="CURRENCY_TABLE_CONTENT_ALIGN"}">';
-			$res .= '<td class="border" width={CONFIG="CURRENCY_COL1_WIDTH"}>{COL1_NAME}</td>';
-			$res .= '<td class="border" width={CONFIG="CURRENCY_COL2_WIDTH"}>{COL2_NAME}</td>';
-			$res .= '<td class="border" width={CONFIG="CURRENCY_COL3_WIDTH"}>{COL3_NAME}</td>';
-			$res .= '<td class="border" width={CONFIG="CURRENCY_COL4_WIDTH"}>{COL4_NAME}</td>';
+			$res .= '<td class="border" width={CONFIG="CURRENCY_COL1_WIDTH"}>{VAR="COL1_NAME"}</td>';
+			$res .= '<td class="border" width={CONFIG="CURRENCY_COL2_WIDTH"}>{VAR="COL2_NAME"}</td>';
+			$res .= '<td class="border" width={CONFIG="CURRENCY_COL3_WIDTH"}>{VAR="COL3_NAME"}</td>';
+			$res .= '<td class="border" width={CONFIG="CURRENCY_COL4_WIDTH"}>{VAR="COL4_NAME"}</td>';
 			$res .= '</tr>';
 			
 			$currency = json_decode($answer);

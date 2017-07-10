@@ -17,7 +17,7 @@
 				</form>
 			</div>
 			
-			<div>{FILES}</div>
+			<div>{VAR="FILES"}</div>
 		</div>
 		
 		{FILE="templates/parts/footer.tpl"}

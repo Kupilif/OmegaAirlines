@@ -10,7 +10,7 @@
 			
 		<div class="content">
 			<div class="indent">
-				{IF "{ISUSERLOGGED}"=="0"}
+				{IF "{VAR="ISUSERLOGGED"}"=="0"}
 					{FILE="templates/parts/authorizationform.tpl"}
 				
 					<div class="delim_empty"></div>
@@ -19,10 +19,10 @@
 				
 					{FILE="templates/parts/registrationform.tpl"}
 				{ENDIF}
-				{IF "{ISUSERLOGGED}"=="1"}
+				{IF "{VAR="ISUSERLOGGED"}"=="1"}
 					{FILE="templates/parts/loggeduser.tpl"}
 				{ENDIF}
-				{IF "{ISUSERLOGGED}"=="2"}
+				{IF "{VAR="ISUSERLOGGED"}"=="2"}
 					{FILE="templates/parts/unactivateduser.tpl"}
 				{ENDIF}
 			</div>

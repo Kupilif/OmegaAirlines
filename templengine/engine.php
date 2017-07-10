@@ -3,7 +3,8 @@
 class CTemplatesEngine
 {
 	const FILES_PATTERN = '/{FILE=\"(.+)\"}/imsU';
-	const ARRAY_PATTERN = '/{COMMON=\"(\w+)\"}/';
+	const COMMON_ARRAY_PATTERN = '/{COMMON=\"(\w+)\"}/';
+	const SPECIFIC_ARRAY_PATTERN = '/{VAR=\"(\w+)\"}/';
 	const CONFIG_PATTERN = '/{CONFIG=\"(\w+)\"}/';
 	const CONDITION_PATTERN = '/{IF \"(\d+)\"(<|>|==|!=|<=|>=)\"(\d+)\"}(.+)({ELSE}(.+))?{ENDIF}/sU';
 	const DATABASE_PATTERN = '/{DB=\"(\w+)\"}/';
@@ -12,6 +13,7 @@ class CTemplatesEngine
 	private $configuration;
 	private $database;
 	private $commonData;
+	private $specificData;
 	private $isConfigurationLoaded;
 	private $isDatabaseConnnected;
 	
@@ -24,6 +26,7 @@ class CTemplatesEngine
 	public function GetPage($templatePath, &$pageData, &$common)
 	{
 		$this->commonData = $common;
+		$this->specificData = $pageData;
 		$this->LoadConfiguration();
 		$this->ConnectToDatabase();
 		$requestedPage = file_get_contents($templatePath);
@@ -31,15 +34,16 @@ class CTemplatesEngine
 		do
 		{	
 			$requestedPage = preg_replace_callback(self::FILES_PATTERN, array($this, 'FromFile'), $requestedPage);
-			$requestedPage = preg_replace_callback(self::ARRAY_PATTERN, array($this, 'FromArray'), $requestedPage);
+			$requestedPage = preg_replace_callback(self::COMMON_ARRAY_PATTERN, array($this, 'FromCommonArray'), $requestedPage);
+			$requestedPage = preg_replace_callback(self::SPECIFIC_ARRAY_PATTERN, array($this, 'FromSpecificArray'), $requestedPage);
 			$requestedPage = preg_replace_callback(self::CONFIG_PATTERN, array($this, 'FromConfigFile'), $requestedPage);
 			$requestedPage = preg_replace_callback(self::DATABASE_PATTERN, array($this, 'FromDatabase'), $requestedPage);
-			$this->InsertData($requestedPage, $pageData);
 			$requestedPage = preg_replace_callback(self::CONDITION_PATTERN, array($this, 'WorkWithCondition'), $requestedPage);
 		}
 		while (
 			(preg_match(self::FILES_PATTERN, $requestedPage) == 1) ||
-			(preg_match(self::ARRAY_PATTERN, $requestedPage) == 1) ||
+			(preg_match(self::COMMON_ARRAY_PATTERN, $requestedPage) == 1) ||
+			(preg_match(self::SPECIFIC_ARRAY_PATTERN, $requestedPage) == 1) ||
 			(preg_match(self::CONFIG_PATTERN, $requestedPage) == 1) ||
 			(preg_match(self::DATABASE_PATTERN, $requestedPage) == 1) ||
 			(preg_match(self::CONDITION_PATTERN, $requestedPage) == 1) );
@@ -79,15 +83,6 @@ class CTemplatesEngine
 		}
 	}
 	
-	/* Подстановка параметров из массива с инофрмацией текущей страницы */
-	private function InsertData(&$page, &$data)
-	{
-		foreach ($data as $parameter => $value)
-		{
-			$page = str_replace('{'.$parameter.'}', $value, $page);
-		}
-	}
-	
 	/* Подстановка параметров с директивой FILE */
 	private function FromFile($regexp)
 	{
@@ -103,12 +98,26 @@ class CTemplatesEngine
 	}
 	
 	/* Подстановка параметров с директивой COMMON */
-	private function FromArray($regexp)
+	private function FromCommonArray($regexp)
 	{
 		$key = $regexp[1];
 		if (array_key_exists($key, $this->commonData))
 		{
 			return $this->commonData[$key];
+		}
+		else
+		{
+			return 'Переменная ' . $key . ' не найдена!';
+		}
+	}
+	
+	/* Подстановка параметров с директивой VAR */
+	private function FromSpecificArray($regexp)
+	{
+		$key = $regexp[1];
+		if (array_key_exists($key, $this->specificData))
+		{
+			return $this->specificData[$key];
 		}
 		else
 		{

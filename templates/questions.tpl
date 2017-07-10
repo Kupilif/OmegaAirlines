@@ -10,7 +10,7 @@
 			
 		<div class="content">
 			<div class="indent">
-				{IF "{ACTION}"=="1"}{FILE="templates/parts/questionnaire.tpl"}{ELSE}{FILE="templates/parts/questionnaireres.tpl"}{ENDIF}
+				{IF "{VAR="ACTION"}"=="1"}{FILE="templates/parts/questionnaire.tpl"}{ELSE}{FILE="templates/parts/questionnaireres.tpl"}{ENDIF}
 			</div>
 		</div>
 		
