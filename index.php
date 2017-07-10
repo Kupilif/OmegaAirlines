@@ -1,20 +1,19 @@
 <?php
-include 'templengine/manager.php';
-include 'templengine/engine.php';
+include 'templengine/generator.php';
 
 	session_start();
-	/* Проверка, передано ли имя запрашиваемой страницы */
+	$generator = new PageGenerator();
+	
 	if (isset($_GET['page']))
 	{
-		$reqPage = $_GET['page'];
+		$pageData = null;
+		$commonData = null;
+		$page = $generator->GetSpecificPage($_GET['page'], $pageData, $commonData);
 	}
 	else
-		$reqPage = 'index';
+	{
+		$page = $generator->GetIndexPage();
+	}
 	
-	CTemplatesManager::GetPageInfo($reqPage, $pagePath, $pageData, $commonData);
-	$engine = new CTemplatesEngine();
-	$page = $engine->GetPage($pagePath, $pageData, $commonData);
-	
-	/* Вывод готовой страницы */
 	echo $page;
 ?>

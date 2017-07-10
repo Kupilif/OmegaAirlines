@@ -75,7 +75,7 @@ function IsUserInDatabase($login, $passwd, $db, &$hash)
 			$encpasswd = sha1($passwd);
 			if ($dbencpasswd == $encpasswd)
 			{
-				$newHash = CTemplatesManager::GetHashCode();
+				$newHash = TemplatesManager::GetHashCode();
 				$db->query("UPDATE `users` SET `hash` = '" . $newHash ."' WHERE BINARY `login` = '" . $login . "' OR `email` = '" . $login . "'");
 				$hash = $newHash;
 				

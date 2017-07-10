@@ -1,141 +1,7 @@
 <?php
 
-class CTemplatesManager
-{
-	private static $data_comon = array (
-		'MOTTO' => 'OmegaAirlines — комфорт и надёжность!',
-		'INDEX_PAGE_LINK' => '"index.php?page=index"',
-		'ROUTES_PAGE_LINK' => '"index.php?page=popular_routes"',
-		'AIRCRAFTS_PAGE_LINK' => '"index.php?page=aircrafts"',
-		'FRIENDS_PAGE_LINK' => '"index.php?page=friends"',
-		'DOCUMENTS_PAGE_LINK' => '"index.php?page=documents"',
-		'QUESTIONS_PAGE_LINK' => '"index.php?page=questions"',
-		'CURRENCY_PAGE_LINK' => '"index.php?page=currency"',
-		'AUTHORIZATION_PAGE_LINK' => '"index.php?page=authorization"',
-		'INDEX_PAGE_NAME' => 'Главная',
-		'ROUTES_PAGE_NAME' => 'Популярные направления',
-		'AIRCRAFTS_PAGE_NAME' => 'Наш авиапарк',
-		'FRIENDS_PAGE_NAME' => 'Наши партнёры',
-		'DOCUMENTS_PAGE_NAME' => 'Документы',
-		'QUESTIONS_PAGE_NAME' => 'Опрос',
-		'CURRENCY_PAGE_NAME' => 'Курсы валют',
-		'AUTHORIZATION_PAGE_NAME' => 'Авторизация',
-		'COPYRIGHT' => '&copyOmegaAirlines 2017, RD TC',
-		'STYLES' => '"styles/style.css"',
-	);
-	
-	private static $data_index = array (
-		'TITLE' => 'Главная',
-		'PAGE_NUM' => '1',
-		'LOGO1' => '"images/main/logo.png"',
-		'LOGO2' => '"images/main/sale.png"',
-		'LOGO3' => '"images/main/comfort.png"',
-		'LOGO4' => '"images/main/safe.png"',
-	);
-	
-	private static $data_routes = array (
-		'TITLE' => 'Популярные направления',
-		'PAGE_NUM' => '2',
-		'ROUTE1_IMG' => '"images/routes/newyork.jpg"',
-		'ROUTE2_IMG' => '"images/routes/london.jpg"',
-		'ROUTE3_IMG' => '"images/routes/paris.jpg"',
-		'ROUTE4_IMG' => '"images/routes/dubai.jpg"',
-		'ROUTE5_IMG' => '"images/routes/barcelona.jpg"',
-	);
-	
-	private static $data_aircrafts = array (
-		'TITLE' => 'Наш авиапарк',
-		'PAGE_NUM' => '3',
-		'PLANE1_NAME' => '"Boeing 737 Wargaming"',
-		'PLANE1_IMG1' => '"images/planes/1_boeing737wg.jpg"',
-		'PLANE1_IMG2' => '"images/planes/2_boeing737wg.jpg"',
-		'PLANE1_IMG3' => '"images/planes/3_boeing737wg.jpg"',
-		'PLANE2_NAME' => '"Boeing 747"',
-		'PLANE2_IMG1' => '"images/planes/1_boeing747.jpg"',
-		'PLANE2_IMG2' => '"images/planes/2_boeing747.jpg"',
-		'PLANE2_IMG3' => '"images/planes/3_boeing747.jpg"',
-		'PLANE3_NAME' => '"Airbus A380"',
-		'PLANE3_IMG1' => '"images/planes/1_airbus_a380.jpg"',
-		'PLANE3_IMG2' => '"images/planes/2_airbus_a380.jpg"',
-		'PLANE3_IMG3' => '"images/planes/3_airbus_a380.jpg"',
-		'PLANE4_NAME' => '"Boeing 787"',
-		'PLANE4_IMG1' => '"images/planes/1_boeing787.jpg"',
-		'PLANE4_IMG2' => '"images/planes/2_boeing787.jpg"',
-		'PLANE4_IMG3' => '"images/planes/3_boeing787.jpg"',
-		'PLANE5_NAME' => '"Airbus A330"',
-		'PLANE5_IMG1' => '"images/planes/1_airbus_a330.jpg"',
-		'PLANE5_IMG2' => '"images/planes/2_airbus_a330.jpg"',
-		'PLANE5_IMG3' => '"images/planes/3_airbus_a330.jpg"',
-		'PLANE6_NAME' => '"Airbus A320neo"',
-		'PLANE6_IMG1' => '"images/planes/1_airbus_a320_neo.jpg"',
-		'PLANE6_IMG2' => '"images/planes/2_airbus_a320_neo.jpg"',
-		'PLANE6_IMG3' => '"images/planes/3_airbus_a320_neo.jpg"',
-	);
-	
-	private static $data_friends = array (
-		'TITLE' => 'Наши партнёры',
-		'PAGE_NUM' => '4',
-		'FRIEND1_LINK' => '"https://www.aa.com"',
-		'FRIEND1_LOGO' => '"images/companies/american_airlines.jpg"',
-		'FRIEND2_LINK' => '"https://www.britishairways.com"',
-		'FRIEND2_LOGO' => '"images/companies/british_airways.jpg"',
-		'FRIEND3_LINK' => '"http://www.aeroflot.ru"',
-		'FRIEND3_LOGO' => '"images/companies/aeroflot.png"',
-		'FRIEND4_LINK' => '"http://www.airfrance.ru"',
-		'FRIEND4_LOGO' => '"images/companies/air_france.jpg"',
-		'FRIEND5_LINK' => '"https://belavia.by"',
-		'FRIEND5_LOGO' => '"images/companies/belavia.jpg"',
-		'FRIEND6_LINK' => '"http://www.airarabia.com"',
-		'FRIEND6_LOGO' => '"images/companies/airarabia.png"',
-		'FRIEND7_LINK' => '"https://www.brusselsairlines.com"',
-		'FRIEND7_LOGO' => '"images/companies/brussels_airlines.jpg"',
-		'FRIEND8_LINK' => '"https://www.klmcityhopper.nl/"',
-		'FRIEND8_LOGO' => '"images/companies/klm.png"',
-		'FRIEND9_LINK' => '"http://www.jetairways.com/IN/"',
-		'FRIEND9_LOGO' => '"images/companies/jet_airways.png"',
-	);
-	
-	private static $data_questions = array (
-		'TITLE' => 'Опрос',
-		'PAGE_NUM' => '6',
-		'ACTION' => '1',
-		'Q1' => 'Ваш пол',
-		'Q2' => 'Ваш возраст',
-		'Q3' => 'Сколько раз Вы летали нашей авиакомпанией',
-		'Q4' => 'Оцените качество перелёта',
-		'Q5' => 'Оцените качество обслуживания во время полёта',
-		'Q6' => 'Оцените информативность и удобство сайта',
-		'Q1_NAME' => 'gender',
-		'Q2_NAME' => 'age',
-		'Q3_NAME' => 'amount',
-		'Q4_NAME' => 'flight',
-		'Q5_NAME' => 'service',
-		'Q6_NAME' => 'site',
-		'Q1_1' => 'Мужской',
-		'Q1_2' => 'Женский',
-		'Q2_1' => '<18',
-		'Q2_2' => '18-25',
-		'Q2_3' => '25-35',
-		'Q2_4' => '35-50',
-		'Q2_5' => '>50',
-		'Q3_1' => '<5',
-		'Q3_2' => '5-10',
-		'Q3_3' => '>10',
-		'Q4_1' => 'Отлично',
-		'Q4_2' => 'Хорошо',
-		'Q4_3' => 'Удовлетворительно',
-		'Q4_4' => 'Плохо',
-	);
-	
-	private static $question_names = array (
-		0 => 'gender',
-		1 => 'age',
-		2 => 'amount',
-		3 => 'flight',
-		4 => 'service',
-		5 => 'site'
-	);
-	
+class TemplatesManager
+{	
 	public static function GetHashCode($length = 10)
 	{
 		$chars = 'ABCDEFGHIJKLMNOPQRSTYVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ';
@@ -152,28 +18,28 @@ class CTemplatesManager
 	
 	public static function GetQuestionNames()
 	{
-		return self::$question_names;
+		return TemplatesData::$question_names;
 	}
 	
-	public static function GetPageInfo($pageName, &$pagePath, &$pageData, &$commonData)
+	public function GetPageInfo($pageName, &$pagePath, &$pageData, &$commonData)
 	{
 		switch ($pageName)
 		{
 			case 'index':
 				$pagePath = 'templates/index.tpl';
-				$pageData = self::$data_index;
+				$pageData = TemplatesData::$data_index;
 				break;
 			case 'popular_routes':
 				$pagePath = 'templates/popular_routes.tpl';
-				$pageData = self::$data_routes;
+				$pageData = TemplatesData::$data_routes;
 				break;
 			case 'aircrafts':
 				$pagePath = 'templates/aircrafts.tpl';
-				$pageData = self::$data_aircrafts;
+				$pageData = TemplatesData::$data_aircrafts;
 				break;
 			case 'friends':
 				$pagePath = 'templates/friends.tpl';
-				$pageData = self::$data_friends;
+				$pageData = TemplatesData::$data_friends;
 				break;
 			case 'documents':
 				$pagePath = 'templates/documents.tpl';
@@ -204,9 +70,9 @@ class CTemplatesManager
 		$commonData = self::GetCommonData();
 	}
 	
-	private static function GetCommonData()
+	private function GetCommonData()
 	{
-		$data = self::$data_comon;
+		$data = TemplatesData::$data_comon;
 		
 		if ( (self::IsUserAuthorized()) )
 		{
@@ -226,7 +92,7 @@ class CTemplatesManager
 		return $data;
 	}
 	
-	private static function GetDataForAuthorizationPage()
+	private function GetDataForAuthorizationPage()
 	{
 		$data['PAGE_NUM'] = '8';
 		
@@ -266,7 +132,7 @@ class CTemplatesManager
 		}
 	}
 	
-	private static function IsAuthorisationInCookies()
+	private function IsAuthorisationInCookies()
 	{
 		if (!isset($_COOKIE['oaAuth']))
 		{
@@ -307,14 +173,14 @@ class CTemplatesManager
 		return true;
 	}
 	
-	private static function UpdateHash($login, $db)
+	private function UpdateHash($login, $db)
 	{
 		$newHash = self::GetHashCode();
 		$db->query("UPDATE `users` SET `hash` = '" . $newHash ."' WHERE BINARY `login` = '" . $login . "'");
 		setcookie('oaAuth', $newHash, time() + 30 * 24* 60 * 60);
 	}
 	
-	private static function GetDataForCurrencyPage()
+	private function GetDataForCurrencyPage()
 	{
 		$curDay = date("Y-m-d");
 		$prevDay = date("Y-m-d" ,time() - 24 * 60 * 60);
@@ -334,7 +200,7 @@ class CTemplatesManager
 		return $data;
 	}
 	
-	private static function GetCurrencyForDate($date)
+	private  function GetCurrencyForDate($date)
 	{
 		$link = "http://www.nbrb.by/API/ExRates/Rates?Periodicity=0&onDate=" . $date;
 		
@@ -383,7 +249,7 @@ class CTemplatesManager
 		}
 	}
 	
-	private static function GetDataForDocumentsPage()
+	private function GetDataForDocumentsPage()
 	{
 		$data['TITLE'] = 'Документы';
 		$data['PAGE_NUM'] = '5';
@@ -392,7 +258,7 @@ class CTemplatesManager
 		return $data;
 	}
 	
-	private static function IsUserAlreadyVote()
+	private function IsUserAlreadyVote()
 	{
 		$db = self::ConnectToDatabase();
 		if ($db == null)
@@ -424,7 +290,7 @@ class CTemplatesManager
 		}
 	}
 	
-	private static function GetQuestinnaire()
+	private function GetQuestinnaire()
 	{
 		if (self::IsUserAlreadyVote())
 		{
@@ -432,22 +298,22 @@ class CTemplatesManager
 		}
 		else
 		{
-			return self::$data_questions;
+			return TemplatesData::$data_questions;
 		}
 	}
 	
-	private static function GetResultsOfQuestinnaire()
+	private function GetResultsOfQuestinnaire()
 	{
-		$res = self::$data_questions;
+		$res = TemplatesData::$data_questions;
 		$res['TITLE'] = 'Результаты';
 		$res['ACTION'] = '2';
 		
 		$database = self::ConnectToDatabase();
 		if ($database != null)
 		{
-			for ($i = 1; $i <= count(self::$question_names); $i++)
+			for ($i = 1; $i <= count(TemplatesData::$question_names); $i++)
 			{
-				self::LoadAnswersFromDatabase(self::$question_names[$i - 1], $i, $res, $database);
+				self::LoadAnswersFromDatabase(TemplatesData::$question_names[$i - 1], $i, $res, $database);
 			}
 			$database->close();
 		}
@@ -471,7 +337,7 @@ class CTemplatesManager
 		}
 	}
 	
-	private static function LoadAnswersFromDatabase($question, $number, &$results, $db)
+	private function LoadAnswersFromDatabase($question, $number, &$results, $db)
 	{
 		$searchRes = $db->query("SELECT `results` FROM `questionnaire` WHERE `question` = '" . $question . "'");
 		if ($searchRes !== false)
@@ -492,7 +358,7 @@ class CTemplatesManager
 		}
 	}
 	
-	private static function GetFilesList()
+	private function GetFilesList()
 	{
 		$filesDir = 'files/';
 		$files = scandir($filesDir);

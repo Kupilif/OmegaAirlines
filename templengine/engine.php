@@ -1,6 +1,8 @@
 <?php
 
-class CTemplatesEngine
+include 'data.php';
+
+class TemplatesEngine
 {
 	const FILES_PATTERN = '/{FILE=\"(.+)\"}/imsU';
 	const COMMON_ARRAY_PATTERN = '/{COMMON=\"(\w+)\"}/';
