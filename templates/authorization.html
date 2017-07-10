@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+{FILE="templates/parts/head.html"}
+<body>
+	<div class="main">
+
+		{FILE="templates/parts/banner.html"}
+	
+		{FILE="templates/parts/menu.html"}
+			
+		<div class="content">
+			<div class="indent">
+				{IF "{ISUSERLOGGED}"=="0"}
+					{FILE="templates/parts/authorizationform.html"}
+				
+					<div class="delim_empty"></div>
+					<hr align="{CONFIG="HR_ALIGN"}" width="{CONFIG="AUTHORIZATION_HR_WIDTH"}" size="{CONFIG="HR_SIZE"}" color="{CONFIG="MAIN_COLOR"}" />
+					<div class="delim_empty"></div>
+				
+					{FILE="templates/parts/registrationform.html"}
+				{ENDIF}
+				{IF "{ISUSERLOGGED}"=="1"}
+					{FILE="templates/parts/loggeduser.html"}
+				{ENDIF}
+				{IF "{ISUSERLOGGED}"=="2"}
+					{FILE="templates/parts/unactivateduser.html"}
+				{ENDIF}
+			</div>
+		</div>
+		
+		{FILE="templates/parts/footer.html"}
+		
+	</div>
+  
+</body>
+</html>

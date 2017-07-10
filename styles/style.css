@@ -1,0 +1,189 @@
+body, html {
+	background: white;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+    height: 100%;
+}
+
+/* Общий для всей страницы контейнер */
+.main {
+	margin: 0;
+    padding: 0;
+	background: white;
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
+/* Поля вокруг содержимого элемента */
+.indent {
+	padding: 5px 5px 5px 5px;
+}
+
+/* Заголовок страницы */
+.header {
+    height: 30%;
+    width: 100%;
+	background: linear-gradient(to bottom, skyblue, white);
+	width: 100%;
+}
+
+/* Шрифт заголовка страницы */
+.banner_font {
+	font-family: Cursive;
+	font-size: 4vw;
+	text-align: center;
+	color: 	#483D8B;
+	position: realtive;
+}
+
+/* Боковое меню */
+.menu {
+    float: left;
+    width: 20%;
+	min-height: 65%;
+	position: relative;
+	
+}
+
+/* Кнопка меню */
+.button{
+	display: inline-block; /* Режим отображения */
+	padding: 6px 10px; /* Отступы от краёв */
+	color: #fff; /* Цвет текста */
+	text-decoration: none; /* Оформление текста */
+	font-weight: bold; /* Насыщенность текста */
+	line-height: 1; /* Межстрочный интервал */
+	border-radius: 5px; /*  Радиус скругления углов */
+	box-shadow: 0 1px 3px #999; /* Тень кнопки */
+	text-shadow: 0 -1px 1px #222; /* Тень текста */
+	border-bottom: 1px solid #222; /* Нижняя граница кнопки */
+	position: realtive;
+	cursor: pointer;
+	width: 90%;
+	text-align: center;
+}
+
+/* Стандартный цвет кнопки */
+.button.normal {
+	background: skyblue;
+}
+
+.button.normal:hover {
+	background: orange;
+}
+
+.button.pressed:hover {
+	background: orange;
+}
+
+/* Цвет кнопки, которая
+   ведёт на текущую страницу */
+.button.pressed {
+	background: #32CD32;
+}
+
+/* Контейнер для отображения основной
+   информации страницы */
+.content {
+    float: left;
+    width: 80%;
+	min-height: 65%;
+	position: relative;
+}
+
+/* Стиль основного текста */
+.content_text {
+	font-family: times new roman;
+	font-size: 24px;
+	color: #483D8B; 
+}
+
+/* Интервал между блоками информации */
+.delim_empty {
+	height: 10px;
+}
+
+/* Рамка вокруг текста */
+.frame {
+	border: 2px solid #483D8B;
+	width: 100%;
+}
+
+/* Отделяет футер от бокового
+   меню и основной части, для 
+   которых задано обтекание */
+.clear {
+	clear: both;
+}
+
+/* Футер */
+.footer {
+	background: linear-gradient(to top, skyblue, white);
+    min-height: 5%;
+    width: 100%;
+	color: #483D8B;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.currency_table {
+	font-family: times new roman;
+	font-size: 20px;
+	border: 2px solid;
+	border-color: #483D8B;
+	border-collapse: collapse;
+}
+
+.currency_table .caption {
+	font-weight: bold;
+	border: 2px solid;
+	border-color: #483D8B;
+	color: #483D8B;
+	background-color: lightcyan;
+	text-align: center;
+}
+
+.currency_table .border {
+	border-right: 2px solid;
+	border-color: #483D8B;
+	padding: 0px 5px 0px 5px;
+}
+
+.currency_table .column1 {
+	color: darkgreen;
+	text-align: center;
+	font-weight: bold;
+	font-size: 18px;
+}
+
+.currency_table .column2 {
+	color: maroon;
+	text-align: right;
+	font-weight: bold;
+	font-size: 18px;
+}
+
+.currency_table .column3 {
+	color: maroon;
+	text-align: left;
+	font-style: italic;
+	font-weight: bold;
+	font-size: 18px;
+}
+
+.currency_table .column4 {
+	color: navy;
+	text-align: right;
+	font-weight: bold;
+	font-size: 20px;
+}
+
+.currency_table .even_row {
+	background-color: linen;
+}
+
+.currency_table .odd_row {
+	background-color: azure; 
+}
