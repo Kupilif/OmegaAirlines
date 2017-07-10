@@ -160,43 +160,43 @@ class CTemplatesManager
 		switch ($pageName)
 		{
 			case 'index':
-				$pagePath = 'templates/index.html';
+				$pagePath = 'templates/index.tpl';
 				$pageData = self::$data_index;
 				break;
 			case 'popular_routes':
-				$pagePath = 'templates/popular_routes.html';
+				$pagePath = 'templates/popular_routes.tpl';
 				$pageData = self::$data_routes;
 				break;
 			case 'aircrafts':
-				$pagePath = 'templates/aircrafts.html';
+				$pagePath = 'templates/aircrafts.tpl';
 				$pageData = self::$data_aircrafts;
 				break;
 			case 'friends':
-				$pagePath = 'templates/friends.html';
+				$pagePath = 'templates/friends.tpl';
 				$pageData = self::$data_friends;
 				break;
 			case 'documents':
-				$pagePath = 'templates/documents.html';
+				$pagePath = 'templates/documents.tpl';
 				$pageData = self::GetDataForDocumentsPage();
 				break;
 			case 'questions':
-				$pagePath = 'templates/questions.html';
+				$pagePath = 'templates/questions.tpl';
 				$pageData = self::GetQuestinnaire();
 				break;
 			case 'questionsres':
-				$pagePath = 'templates/questions.html';
+				$pagePath = 'templates/questions.tpl';
 				$pageData = self::GetResultsOfQuestinnaire();
 				break;
 			case 'currency':
-				$pagePath = 'templates/currency.html';
+				$pagePath = 'templates/currency.tpl';
 				$pageData = self::GetDataForCurrencyPage();
 				break;
 			case 'authorization':
-				$pagePath = 'templates/authorization.html';
+				$pagePath = 'templates/authorization.tpl';
 				$pageData = self::GetDataForAuthorizationPage();
 				break;
 			default:
-				$pagePath = 'templates/index.html';
+				$pagePath = 'templates/index.tpl';
 				$pageData = self::$data_index;
 		}
 		

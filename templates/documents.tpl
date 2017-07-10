@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
-{FILE="templates/parts/head.html"}
+{FILE="templates/parts/head.tpl"}
 <body>
 	<div class="main">
 
-		{FILE="templates/parts/banner.html"}
+		{FILE="templates/parts/banner.tpl"}
 	
-		{FILE="templates/parts/menu.html"}
+		{FILE="templates/parts/menu.tpl"}
 			
 		<div class="content">
 			
@@ -20,7 +20,7 @@
 			<div>{FILES}</div>
 		</div>
 		
-		{FILE="templates/parts/footer.html"}
+		{FILE="templates/parts/footer.tpl"}
 		
 	</div>
   
