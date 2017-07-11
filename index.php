@@ -16,4 +16,3 @@ include 'templengine/generator.php';
 	}
 	
 	echo $page;
-?>

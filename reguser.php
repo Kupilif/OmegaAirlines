@@ -148,4 +148,3 @@ else
 	$generator = new PageGenerator();
 	echo $generator->GetErrorPage('Указан неверный email!', 'index.php?page=authorization');
 }
-

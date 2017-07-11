@@ -1,5 +1,7 @@
 <?php
 
+include_once $_SERVER['DOCUMENT_ROOT'] . '/oa.com/database/client.php';
+
 class TemplatesEngine
 {
 	const FILES_PATTERN = '/{FILE=\"(.+)\"}/imsU';
@@ -11,7 +13,7 @@ class TemplatesEngine
 	
 	private $configFilePath;
 	private $configuration;
-	private $database;
+	private $dbclient;
 	private $commonData;
 	private $specificData;
 	private $isConfigurationLoaded;
@@ -28,8 +30,14 @@ class TemplatesEngine
 		$this->commonData = $common;
 		$this->specificData = $pageData;
 		$this->LoadConfiguration();
-		$this->ConnectToDatabase();
+		$this->dbclient = new DataBaseClient();
 		$requestedPage = file_get_contents($templatePath);
+		
+		try
+		{
+			$this->dbclient->Connect();
+		}
+		catch(Exception $e) { echo $e->message; }
 		
 		do
 		{	
@@ -48,7 +56,7 @@ class TemplatesEngine
 			(preg_match(self::DATABASE_PATTERN, $requestedPage) == 1) ||
 			(preg_match(self::CONDITION_PATTERN, $requestedPage) == 1) );
 		
-		$this->database->close();
+		$this->dbclient->Disconnect();
 		return $requestedPage;
 	}
 	
@@ -63,23 +71,6 @@ class TemplatesEngine
 		else
 		{
 			$this->isConfigurationLoaded = false;
-		}
-	}
-	
-	/* Подключение к базе данных */
-	private function ConnectToDatabase()
-	{
-		$this->database = new mysqli('localhost', 'root', '2019755', 'site');
-		if ($this->database != null)
-		{
-			$this->isDatabaseConnnected = true;
-			$this->database->query("SET CHARACTER SET 'UTF8'");
-			$this->database->query("SET CHARSET 'UTF8'");
-			$this->database->query("SET NAMES 'UTF8'");
-		}
-		else
-		{
-			$this->isDatabaseConnnected = false;
 		}
 	}
 	
@@ -145,32 +136,7 @@ class TemplatesEngine
 	/* Подстановка параметров с директивой DB */
 	private function FromDatabase($regexp)
 	{
-		if ($this->isDatabaseConnnected)
-		{
-			$searchRes = $this->database->query("SELECT `value` FROM `description` WHERE `name` = '" . $regexp[1] . "'");
-			if ($searchRes !== false)
-			{
-				if (mysqli_num_rows($searchRes) > 0)
-				{
-					$elem = $searchRes->fetch_assoc();
-					$resStr = $elem['value'];
-					$resStr = nl2br($resStr);
-					return $resStr;
-				}
-				else
-				{
-					return "Запрашиваемый элемент не найден в базе данных!";
-				}
-			}
-			else
-			{
-				return "Запрашиваемый элемент не найден в базе данных!";
-			}
-		}
-		else
-		{
-			return "Не удалось подключиться к базе даных!";
-		}
+		return $this->dbclient->GetValueForTemplatesEngine($regexp[1]);
 	}
 	
 	/* Подстановка параметров с директивой IF */
