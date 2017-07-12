@@ -2,10 +2,11 @@
 
 include_once $_SERVER['DOCUMENT_ROOT'] . '/oa.com/config.php';
 
-include_once SITE_ROOT . 'templengine/data.php';
-include_once SITE_ROOT . 'auth/authcontrol.php';
-include_once SITE_ROOT . 'database/client.php';
-include_once SITE_ROOT . 'api/currency.php';
+include_once SITE_ROOT . '/templengine/data.php';
+include_once SITE_ROOT . '/auth/authcontrol.php';
+include_once SITE_ROOT . '/database/dbclient.php';
+include_once SITE_ROOT . '/api/currency.php';
+include_once SITE_ROOT . '/files/storagemanager.php';
 
 class TemplatesManager
 {	
@@ -25,7 +26,7 @@ class TemplatesManager
 	
 	public function GetErrorPageInfo($message, $link, &$pagePath, &$pageData, &$commonData)
 	{
-		$pagePath = SITE_ROOT . 'templates/error.tpl';
+		$pagePath = SITE_ROOT . '/templates/error.tpl';
 		$pageData = TemplatesData::$error_page;
 		$pageData['MESSAGE'] = $message;
 		$pageData['LINK'] = $link;
@@ -37,43 +38,43 @@ class TemplatesManager
 		switch ($pageName)
 		{
 			case 'index':
-				$pagePath = 'templates/index.tpl';
+				$pagePath = '/templates/index.tpl';
 				$pageData = TemplatesData::$data_index;
 				break;
 			case 'popular_routes':
-				$pagePath = 'templates/popular_routes.tpl';
+				$pagePath = '/templates/popular_routes.tpl';
 				$pageData = TemplatesData::$data_routes;
 				break;
 			case 'aircrafts':
-				$pagePath = 'templates/aircrafts.tpl';
+				$pagePath = '/templates/aircrafts.tpl';
 				$pageData = TemplatesData::$data_aircrafts;
 				break;
 			case 'friends':
-				$pagePath = 'templates/friends.tpl';
+				$pagePath = '/templates/friends.tpl';
 				$pageData = TemplatesData::$data_friends;
 				break;
 			case 'documents':
-				$pagePath = 'templates/documents.tpl';
+				$pagePath = '/templates/documents.tpl';
 				$pageData = $this->GetDataForDocumentsPage();
 				break;
 			case 'questions':
-				$pagePath = 'templates/questions.tpl';
+				$pagePath = '/templates/questions.tpl';
 				$pageData = $this->GetQuestinnaire();
 				break;
 			case 'questionsres':
-				$pagePath = 'templates/questions.tpl';
+				$pagePath = '/templates/questions.tpl';
 				$pageData = $this->GetResultsOfQuestinnaire();
 				break;
 			case 'currency':
-				$pagePath = 'templates/currency.tpl';
+				$pagePath = '/templates/currency.tpl';
 				$pageData = $this->GetDataForCurrencyPage();
 				break;
 			case 'authorization':
-				$pagePath = 'templates/authorization.tpl';
+				$pagePath = '/templates/authorization.tpl';
 				$pageData = $this->GetDataForAuthorizationPage();
 				break;
 			default:
-				$pagePath = 'templates/notfound.tpl';
+				$pagePath = '/templates/notfound.tpl';
 				$pageData = TemplatesData::$page_404;
 		}
 		
@@ -88,7 +89,7 @@ class TemplatesManager
 		if ( ($this->auth->IsUserAuthorized()) )
 		{
 			$data['AUTHORIZATION_PAGE_NAME'] = $this->auth->Username();
-			if (!$this->auth->IsUserActvated())
+			if (!$this->auth->IsUserActivated())
 			{
 				$data['DOCUMENTS_PAGE_LINK'] = 'index.php?page=authorization';
 				$data['QUESTIONS_PAGE_LINK'] = 'index.php?page=authorization';
@@ -112,7 +113,7 @@ class TemplatesManager
 			$data['TITLE'] = $this->auth->Username();
 			$data['USERNAME'] = $this->auth->Username();
 			
-			if ($this->$auth->IsUserActivated())
+			if ($this->auth->IsUserActivated())
 			{
 				$data['ISUSERLOGGED'] = '1';
 			}
@@ -157,14 +158,16 @@ class TemplatesManager
 	{
 		$data['TITLE'] = 'Документы';
 		$data['PAGE_NUM'] = '5';
-		$data['FILES'] = $this->GetFilesList();
+		
+		$storage = new StorageManager();
+		$data['FILES'] = $storage->GetFilesList();
 	
 		return $data;
 	}
 	
 	private function GetQuestinnaire()
 	{
-		if ($this->auth->IsUserAlreadyVote())
+		if ($this->auth->IsUserVoted())
 		{
 			return $this->GetResultsOfQuestinnaire();
 		}
@@ -191,35 +194,9 @@ class TemplatesManager
 		catch(Excption $e) { }
 		finally
 		{
-			$this->db-Disconnect();
+			$this->db->Disconnect();
 		}
-		
-		return $res;
-	}
-	
-	private function GetFilesList()
-	{
-		$filesDir = 'files/';
-		$files = scandir($filesDir);
-		$res = "<table>";
-	
-		for ($i = 2; $i < count($files); $i++)
-		{
-			$path = $filesDir . $files[$i];
-		
-			$res .= "<tr>";
-		
-			$res .= "<td><a href=\"deletefile.php?filename={$files[$i]}\"><button>Удалить</button></a></td>";
-		
-			$res .= "<td>";
-		
-			$res .= "<a href=\"$path\" target=\"_blank\">{$files[$i]}</a>";
-		
-			$res .= "</td>";
-			$res .= "</tr>";
-		}
-	
-		$res .= "</table>";
+
 		return $res;
 	}
 }

@@ -2,7 +2,7 @@
 
 include_once 'config.php';
 
-include SITE_ROOT . 'templengine/generator.php';
+include SITE_ROOT . '/templengine/generator.php';
 
 $generator = new PageGenerator();
 

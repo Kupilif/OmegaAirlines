@@ -59,10 +59,10 @@ class DataBaseClient
 	
 	public function GetQuestionAnswers($question, $number, &$results)
 	{
-		$queryResult = $this->$db->query("SELECT `results` FROM `questionnaire` WHERE `question` = '" . $question . "'");
+		$queryResult = $this->db->query("SELECT `results` FROM `questionnaire` WHERE `question` = '" . $question . "'");
 		if ($queryResult !== false)
 		{
-			if (mysqli_num_rows($searchRes) > 0)
+			if ($queryResult->num_rows == 1)
 			{
 				$curElem = $queryResult->fetch_assoc();
 				$strAnswers = $curElem['results'];
@@ -80,7 +80,7 @@ class DataBaseClient
 	
 	public function FindUserWithHash($hash)
 	{
-		$queryResult = $this->$db->query("SELECT * FROM `users` WHERE `hash` = '$savedHash'");
+		$queryResult = $this->db->query("SELECT * FROM `users` WHERE `hash` = '$hash'");
 		if ($queryResult === false)
 		{
 			return NULL;
@@ -94,14 +94,42 @@ class DataBaseClient
 		return $queryResult->fetch_assoc();
 	}
 	
+	public function FindUserWithLoginAndPasswd($login, $passwd)
+	{
+		$queryResult = $this->db->query("SELECT * FROM `users` WHERE BINARY `login` = '$login' OR `email` = '$login'");
+		if ($queryResult === false)
+		{
+			return NULL;
+		}
+	
+		if ($queryResult->num_rows != 1)	
+		{
+			return NULL;
+		}
+		
+		$userInfo = $queryResult->fetch_assoc();
+		
+		$dbencpasswd = $userInfo['passwd'];
+		$encpasswd = sha1($passwd);
+		
+		if ($dbencpasswd == $encpasswd)
+		{
+			return $userInfo;
+		}
+		else
+		{
+			return NULL;
+		}
+	}
+	
 	public function UpdateUserHash($username, $hash)
 	{
-		$this->$db->query("UPDATE `users` SET `hash` = '" . $hash ."' WHERE BINARY `login` = '" . $username . "'");
+		$this->db->query("UPDATE `users` SET `hash` = '" . $hash ."' WHERE BINARY `login` = '" . $username . "' OR `email` = '" . $username . "'");
 	}
 	
 	public function IsUserVoted($login)
 	{
-		$queryResult = $this->$db->query("SELECT `vote` FROM `users` WHERE BINARY `login` = '" . $_SESSION['username'] . "'");
+		$queryResult = $this->db->query("SELECT `vote` FROM `users` WHERE BINARY `login` = '" . $_SESSION['username'] . "'");
 		if ($queryResult === false)
 		{
 			return false;

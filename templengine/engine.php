@@ -2,7 +2,7 @@
 
 include_once $_SERVER['DOCUMENT_ROOT'] . '/oa.com/config.php';
 
-include_once SITE_ROOT . 'database/client.php';
+include_once SITE_ROOT . '/database/dbclient.php';
 
 class TemplatesEngine
 {
@@ -43,19 +43,19 @@ class TemplatesEngine
 		
 		do
 		{	
-			$requestedPage = preg_replace_callback(self::FILES_PATTERN, array($this, 'FromFile'), $requestedPage);
 			$requestedPage = preg_replace_callback(self::COMMON_ARRAY_PATTERN, array($this, 'FromCommonArray'), $requestedPage);
 			$requestedPage = preg_replace_callback(self::SPECIFIC_ARRAY_PATTERN, array($this, 'FromSpecificArray'), $requestedPage);
 			$requestedPage = preg_replace_callback(self::CONFIG_PATTERN, array($this, 'FromConfigFile'), $requestedPage);
 			$requestedPage = preg_replace_callback(self::DATABASE_PATTERN, array($this, 'FromDatabase'), $requestedPage);
+			$requestedPage = preg_replace_callback(self::FILES_PATTERN, array($this, 'FromFile'), $requestedPage);
 			$requestedPage = preg_replace_callback(self::CONDITION_PATTERN, array($this, 'WorkWithCondition'), $requestedPage);
 		}
 		while (
-			(preg_match(self::FILES_PATTERN, $requestedPage) == 1) ||
 			(preg_match(self::COMMON_ARRAY_PATTERN, $requestedPage) == 1) ||
 			(preg_match(self::SPECIFIC_ARRAY_PATTERN, $requestedPage) == 1) ||
 			(preg_match(self::CONFIG_PATTERN, $requestedPage) == 1) ||
 			(preg_match(self::DATABASE_PATTERN, $requestedPage) == 1) ||
+			(preg_match(self::FILES_PATTERN, $requestedPage) == 1) ||
 			(preg_match(self::CONDITION_PATTERN, $requestedPage) == 1) );
 		
 		$this->dbclient->Disconnect();

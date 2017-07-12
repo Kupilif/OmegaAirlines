@@ -2,7 +2,10 @@
 
 include_once $_SERVER['DOCUMENT_ROOT'] . '/oa.com/config.php';
 
-include_once SITE_ROOT . 'database/client.php';
+include_once SITE_ROOT . '/database/dbclient.php';
+include_once SITE_ROOT . '/templengine/generator.php';
+include_once SITE_ROOT . '/api/recaptcha.php';
+include_once SITE_ROOT . '/mail/mailsender.php';
 
 class AuthorizationControl
 {
@@ -10,7 +13,10 @@ class AuthorizationControl
 	
 	public function __construct()
 	{
-		session_start();
+		if (session_id() == '')
+		{	
+			session_start();
+		}
 		$this->db = new DatabaseClient();
 	}
 	
@@ -66,16 +72,70 @@ class AuthorizationControl
 	{
 		try
 		{
-			$this->$db->Connect();
+			$this->db->Connect();
 		}
 		catch(Excption $e)
 		{
 			return false;
 		}
 		
-		$res = $this->$db->IsUserVoted($this->Username());
-		$this->$db->Disconnect();
+		$res = $this->db->IsUserVoted($this->Username());
+		$this->db->Disconnect();
 		return $res;
+	}
+	
+	public function AuthorizeUser($login, $passwd, $recaptchaResponse, $rememberUser)
+	{
+		$generator = new PageGenerator();
+		$this->db = new DatabaseClient();
+		$recaptcha = new Recaptcha();
+		$mailSender = new MailSender();
+		
+		if (!$recaptcha->IsValid($recaptchaResponse))
+		{
+			echo $generator->GetErrorPage('Вы – робот!', SITE_ROOT_HTML . '/index.php?page=authorization');
+			exit(1);
+		}
+		
+		try
+		{
+			$this->db->Connect();
+		}
+		catch (Excetion $e)
+		{
+			echo $generator->GetErrorPage('Не удалось подключиться к базе данных!', SITE_ROOT_HTML . '/index.php?page=authorization');
+			exit(1);
+		}
+		
+		$userInfo = $this->db->FindUserWithLoginAndPasswd($login, $passwd);
+		if ($userInfo === NULL)
+		{
+			echo $generator->GetErrorPage('Неверное имя пользователя или пароль!', SITE_ROOT_HTML . '/index.php?page=authorization');
+			exit(1);
+		}	
+		
+		$_SESSION['isUserLogged'] = true;
+		$_SESSION['username'] = $userInfo['login'];
+		$_SESSION['email'] = $userInfo['email'];
+		$_SESSION['isUserActivated'] = ($userInfo['activation'] == 'ACTIVATED');
+		
+		$newHash = $this->UpdateHash($userInfo['login']);
+		if ($rememberUser)
+		{
+			setcookie('oaAuth', $newHash, time() + 30 * 24 * 60 * 60, '/');
+		}
+		else
+		{
+			setcookie('oaAuth', '', time() - 60, '/');
+		}
+		
+		if (NEED_SECURITY_EMAIL)
+		{
+			$mailSender->SendSecurityNotification($this->EMail(), $this->Username());
+		}
+		
+		$this->db->Disconnect();
+		header('Location: ' . SITE_ROOT_HTML . '/index.php?page=authorization');
 	}
 	
 	private function IsAuthorisationInCookies()
@@ -86,20 +146,19 @@ class AuthorizationControl
 		}
 			
 		$savedHash = $_COOKIE['oaAuth'];
-		
 		try
 		{
-			$this->$db->Connect();
+			$this->db->Connect();
 		}
 		catch(Excption $e)
 		{
 			return false;
 		}
 		
-		$userInfo = $this->$db->FindUserWithHash($savedHash);
+		$userInfo = $this->db->FindUserWithHash($savedHash);
 		if ($userInfo === NULL)
 		{
-			setcookie('oaAuth', '', time() - 60);
+			setcookie('oaAuth', '', time() - 60, '/');
 			return false;
 		}
 		
@@ -108,9 +167,11 @@ class AuthorizationControl
 		$_SESSION['email'] = $userInfo['email'];
 		$_SESSION['isUserActivated'] = ($userInfo['activation'] == 'ACTIVATED');
 		
-		$this->UpdateHash($userInfo['login']);
+		$newHash = $this->UpdateHash($userInfo['login']);
+		setcookie('oaAuth', $newHash, time() + 30 * 24 * 60 * 60, '/');
 		
-		$this->$db->Disconnect();
+		
+		$this->db->Disconnect();
 		
 		return true;
 	}
@@ -132,8 +193,8 @@ class AuthorizationControl
 	private function UpdateHash($login)
 	{
 		$newHash = $this->GetRandomHash(50);
-		$db->UpdateUserHash($login, $newHash);
-		setcookie('oaAuth', $newHash, time() + 30 * 24* 60 * 60);
+		$this->db->UpdateUserHash($login, $newHash);
+		return $newHash;
 	}
 }
 
