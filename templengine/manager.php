@@ -1,21 +1,21 @@
 <?php
 
-include_once 'data.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/oa.com/config.php';
+
+include_once SITE_ROOT . 'templengine/data.php';
+include_once SITE_ROOT . 'auth/authcontrol.php';
+include_once SITE_ROOT . 'database/client.php';
+include_once SITE_ROOT . 'api/currency.php';
 
 class TemplatesManager
 {	
-	public function GetHashCode($length = 10)
+	private $db;
+	private $auth;
+	
+	public function __construct()
 	{
-		$chars = 'ABCDEFGHIJKLMNOPQRSTYVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ';
-		$charslen = strlen($chars) - 1;
-		$code = '';
-		
-		for ($i = 0; $i < $length; $i++)
-		{
-			$code .= $chars{mt_rand(0, $charslen)};
-		}
-		
-		return sha1($code);
+		$this->auth = new AuthorizationControl();
+		$this->db = new DatabaseClient();
 	}
 	
 	public function GetQuestionNames()
@@ -25,7 +25,7 @@ class TemplatesManager
 	
 	public function GetErrorPageInfo($message, $link, &$pagePath, &$pageData, &$commonData)
 	{
-		$pagePath = $_SERVER['DOCUMENT_ROOT'] . '/oa.com/templates/error.tpl';
+		$pagePath = SITE_ROOT . 'templates/error.tpl';
 		$pageData = TemplatesData::$error_page;
 		$pageData['MESSAGE'] = $message;
 		$pageData['LINK'] = $link;
@@ -77,7 +77,7 @@ class TemplatesManager
 				$pageData = TemplatesData::$page_404;
 		}
 		
-		$pagePath = $_SERVER['DOCUMENT_ROOT'] . '/oa.com/' . $pagePath;
+		$pagePath = SITE_ROOT . $pagePath;
 		$commonData = $this->GetCommonData();
 	}
 	
@@ -85,10 +85,10 @@ class TemplatesManager
 	{
 		$data = TemplatesData::$data_comon;
 		
-		if ( ($this->IsUserAuthorized()) )
+		if ( ($this->auth->IsUserAuthorized()) )
 		{
-			$data['AUTHORIZATION_PAGE_NAME'] = $_SESSION['username'];
-			if (!$_SESSION['isUserActivated'])
+			$data['AUTHORIZATION_PAGE_NAME'] = $this->auth->Username();
+			if (!$this->auth->IsUserActvated())
 			{
 				$data['DOCUMENTS_PAGE_LINK'] = 'index.php?page=authorization';
 				$data['QUESTIONS_PAGE_LINK'] = 'index.php?page=authorization';
@@ -107,19 +107,19 @@ class TemplatesManager
 	{
 		$data['PAGE_NUM'] = '8';
 		
-		if ( $this->IsUserAuthorized() )
+		if ( $this->auth->IsUserAuthorized() )
 		{
-			$data['TITLE'] = $_SESSION['username'];
-			$data['USERNAME'] = $_SESSION['username'];
+			$data['TITLE'] = $this->auth->Username();
+			$data['USERNAME'] = $this->auth->Username();
 			
-			if ($_SESSION['isUserActivated'])
+			if ($this->$auth->IsUserActivated())
 			{
 				$data['ISUSERLOGGED'] = '1';
 			}
 			else
 			{
 				$data['ISUSERLOGGED'] = '2';
-				$data['EMAIL'] = $_SESSION['email'];
+				$data['EMAIL'] = $auth->EMail();
 			}
 		}
 		else
@@ -129,66 +129,6 @@ class TemplatesManager
 		}
 		
 		return $data;
-	}
-	
-	public function IsUserAuthorized()
-	{
-		if ( ((isset($_SESSION['isUserLogged'])) && ($_SESSION['isUserLogged'] == true)) )
-		{
-			return true;
-		}
-		else
-		{
-			return ($this->IsAuthorisationInCookies());
-		}
-	}
-	
-	private function IsAuthorisationInCookies()
-	{
-		if (!isset($_COOKIE['oaAuth']))
-		{
-			return false;
-		}
-			
-		$savedHash = $_COOKIE['oaAuth'];
-		$database = $this->ConnectToDatabase();
-		if ($database == null)
-		{
-			
-			return false;
-		}
-			
-		$searchRes = $database->query("SELECT * FROM `users` WHERE `hash` = '$savedHash'");
-		if ($searchRes === false)
-		{
-			$database->close();
-			setcookie('oaAuth', '', time() - 60);
-			return false;
-		}
-		
-		if (mysqli_num_rows($searchRes) != 1)
-		{
-			$database->close();
-			setcookie('oaAuth', '', time() - 60);
-			return false;
-		}
-		
-		$elems = $searchRes->fetch_assoc();
-		$_SESSION['isUserLogged'] = true;
-		$_SESSION['username'] = $elems['login'];
-		$_SESSION['email'] = $elems['email'];
-		$_SESSION['isUserActivated'] = ($elems['activation'] == 'ACTIVATED');
-		$this->UpdateHash($elems['login'], $database);
-		$database->close();
-		
-		return true;
-	}
-	
-	private function UpdateHash($login, $db)
-	{
-		$newHash = $this->GetHashCode();
-		$db->query("UPDATE `users` SET `hash` = '" . $newHash ."' WHERE BINARY `login` = '" . $login . "'");
-		setcookie('oaAuth', $newHash, time() + 30 * 24* 60 * 60);
 	}
 	
 	private function GetDataForCurrencyPage()
@@ -205,59 +145,12 @@ class TemplatesManager
 		$data['COL4_NAME'] = 'Официальный курс, BYN';
 		$data['CUR_DATE'] = $curDay;
 		$data['PREV_DATE'] = $prevDay;
-		$data['CUR_DATE_CURRENCY'] = $this->GetCurrencyForDate($curDay);
-		$data['PREV_DATE_CURRENCY'] = $this->GetCurrencyForDate($prevDay);
+		
+		$currency = new Currency();
+		$data['CUR_DATE_CURRENCY'] = $currency->GetCurrencyForDate($curDay);
+		$data['PREV_DATE_CURRENCY'] = $currency->GetCurrencyForDate($prevDay);
 	
 		return $data;
-	}
-	
-	private function GetCurrencyForDate($date)
-	{
-		$link = "http://www.nbrb.by/API/ExRates/Rates?Periodicity=0&onDate=" . $date;
-		
-		$request = curl_init($link);
-		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($request, CURLOPT_HEADER, 0);
-		curl_setopt($request, CURLOPT_TIMEOUT, 3);
-		$answer = curl_exec($request);
-		curl_close($request);
-	
-		if ($answer === false)
-		{
-			return "Не удалось получить курсы валют для даты " . $date;
-		}
-		else
-		{
-			$res = '<table class="currency_table" width={CONFIG="CURRENCY_TABLE_WIDTH"} align="{CONFIG="CURRENCY_TABLE_ALIGN"}">';
-			$res .= '<tr class="caption" align="{CONFIG="CURRENCY_TABLE_CONTENT_ALIGN"}">';
-			$res .= '<td class="border" width={CONFIG="CURRENCY_COL1_WIDTH"}>{VAR="COL1_NAME"}</td>';
-			$res .= '<td class="border" width={CONFIG="CURRENCY_COL2_WIDTH"}>{VAR="COL2_NAME"}</td>';
-			$res .= '<td class="border" width={CONFIG="CURRENCY_COL3_WIDTH"}>{VAR="COL3_NAME"}</td>';
-			$res .= '<td class="border" width={CONFIG="CURRENCY_COL4_WIDTH"}>{VAR="COL4_NAME"}</td>';
-			$res .= '</tr>';
-			
-			$currency = json_decode($answer);
-			for ($i = 0; $i < count($currency); $i++)
-			{
-				if (($i + 1) % 2 == 0)
-				{
-					$curClass = "even_row";
-				}
-				else
-				{
-					$curClass = "odd_row";
-				}	
-				$res .= '<tr class="' . $curClass . '" align="{CONFIG="CURRENCY_TABLE_CONTENT_ALIGN"}">';
-				$res .= "<td class=\"border column1\">{$currency[$i]->Cur_Abbreviation}</td>";
-				$res .= "<td class=\"border column2\">{$currency[$i]->Cur_Scale}</td>";
-				$res .= "<td class=\"border column3\">{$currency[$i]->Cur_Name}</td>";
-				$res .= "<td class=\"border column4\">{$currency[$i]->Cur_OfficialRate}</td>";
-				$res .= '</tr>';
-			}
-			
-			$res .= '</table>';
-			return $res;
-		}
 	}
 	
 	private function GetDataForDocumentsPage()
@@ -269,41 +162,9 @@ class TemplatesManager
 		return $data;
 	}
 	
-	private function IsUserAlreadyVote()
-	{
-		$db = $this->ConnectToDatabase();
-		if ($db == null)
-		{
-			return false;
-		}
-		
-		$searchRes = $db->query("SELECT * FROM `users` WHERE BINARY `login` = '" . $_SESSION['username'] . "'");
-		if ($searchRes === false)
-		{
-			return false;
-		}
-		
-		if (mysqli_num_rows($searchRes) != 1)
-		{
-			return false;
-		}
-		
-		$elems = $searchRes->fetch_assoc();
-		if ($elems['vote'] == 0)
-		{
-			$db->close();
-			return false;
-		}
-		else
-		{
-			$db->close();
-			return true;
-		}
-	}
-	
 	private function GetQuestinnaire()
 	{
-		if ($this->IsUserAlreadyVote())
+		if ($this->auth->IsUserAlreadyVote())
 		{
 			return $this->GetResultsOfQuestinnaire();
 		}
@@ -319,54 +180,21 @@ class TemplatesManager
 		$res['TITLE'] = 'Результаты';
 		$res['ACTION'] = '2';
 		
-		$database = $this->ConnectToDatabase();
-		if ($database != null)
+		try
 		{
+			$this->db->Connect();
 			for ($i = 1; $i <= count(TemplatesData::$question_names); $i++)
 			{
-				$this->LoadAnswersFromDatabase(TemplatesData::$question_names[$i - 1], $i, $res, $database);
+				$this->db->GetQuestionAnswers(TemplatesData::$question_names[$i - 1], $i, $res);
 			}
-			$database->close();
+		}
+		catch(Excption $e) { }
+		finally
+		{
+			$this->db-Disconnect();
 		}
 		
 		return $res;
-	}
-	
-	public function ConnectToDatabase()
-	{
-		$database = new mysqli('localhost', 'root', '2019755', 'site');
-		if ($database != null)
-		{
-			$database->query("SET CHARACTER SET 'UTF8'");
-			$database->query("SET CHARSET 'UTF8'");
-			$database->query("SET NAMES 'UTF8'");
-			return $database;
-		}
-		else
-		{
-			return null;
-		}
-	}
-	
-	private function LoadAnswersFromDatabase($question, $number, &$results, $db)
-	{
-		$searchRes = $db->query("SELECT `results` FROM `questionnaire` WHERE `question` = '" . $question . "'");
-		if ($searchRes !== false)
-		{
-			if (mysqli_num_rows($searchRes) > 0)
-			{
-				$elem = $searchRes->fetch_assoc();
-				$strAnswers = $elem['results'];
-				$answers = preg_split("/-/", $strAnswers);
-				
-				$size = count($answers);
-				for ($i = 1; $i <= $size; $i++)
-				{
-					$name = "A" . $number . "_" . $i;
-					$results["$name"] = $answers[$i - 1];
-				}
-			}
-		}
 	}
 	
 	private function GetFilesList()

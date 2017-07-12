@@ -1,6 +1,8 @@
 <?php
 
-include_once $_SERVER['DOCUMENT_ROOT'] . '/oa.com/database/client.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/oa.com/config.php';
+
+include_once SITE_ROOT . 'database/client.php';
 
 class TemplatesEngine
 {
@@ -37,7 +39,7 @@ class TemplatesEngine
 		{
 			$this->dbclient->Connect();
 		}
-		catch(Exception $e) { echo $e->message; }
+		catch(Exception $e) { }
 		
 		do
 		{	

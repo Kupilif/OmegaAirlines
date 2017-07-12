@@ -1,7 +1,5 @@
 <?php
 
-include 'config.php';
-
 class DataBaseClient
 {
 	private $db;
@@ -57,5 +55,64 @@ class DataBaseClient
 			$res = nl2br($res);
 		}
 		return $res;
+	}
+	
+	public function GetQuestionAnswers($question, $number, &$results)
+	{
+		$queryResult = $this->$db->query("SELECT `results` FROM `questionnaire` WHERE `question` = '" . $question . "'");
+		if ($queryResult !== false)
+		{
+			if (mysqli_num_rows($searchRes) > 0)
+			{
+				$curElem = $queryResult->fetch_assoc();
+				$strAnswers = $curElem['results'];
+				$answers = preg_split("/-/", $strAnswers);
+				
+				$size = count($answers);
+				for ($i = 1; $i <= $size; $i++)
+				{
+					$name = "A" . $number . "_" . $i;
+					$results["$name"] = $answers[$i - 1];
+				}
+			}
+		}
+	}
+	
+	public function FindUserWithHash($hash)
+	{
+		$queryResult = $this->$db->query("SELECT * FROM `users` WHERE `hash` = '$savedHash'");
+		if ($queryResult === false)
+		{
+			return NULL;
+		}
+	
+		if ($queryResult->num_rows != 1)	
+		{
+			return NULL;
+		}
+		
+		return $queryResult->fetch_assoc();
+	}
+	
+	public function UpdateUserHash($username, $hash)
+	{
+		$this->$db->query("UPDATE `users` SET `hash` = '" . $hash ."' WHERE BINARY `login` = '" . $username . "'");
+	}
+	
+	public function IsUserVoted($login)
+	{
+		$queryResult = $this->$db->query("SELECT `vote` FROM `users` WHERE BINARY `login` = '" . $_SESSION['username'] . "'");
+		if ($queryResult === false)
+		{
+			return false;
+		}
+		
+		if ($queryResult->num_rows != 1)
+		{
+			return false;
+		}
+		
+		$elem = $queryResult->fetch_assoc();
+		return $elem['vote'] == '1';
 	}
 }
