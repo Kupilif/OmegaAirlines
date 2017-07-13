@@ -2,6 +2,23 @@
 
 class MailSender
 {
+	public function SendActivationEMail($address, $code)
+	{
+		$subject = 'oa.com - Welcome!';
+		$message = "Благодарим Вас за регистрацию на портале OmegaAirlines!\n";
+		$message .= "Для завершения регистрации Вам необходимо ввести код активации в указанное на сайте поле.\n";
+		$message .= "Ваш код активации : $code\n";
+		return mail($address, $subject, $message);
+	}
+	
+	public function ResandActivationCode($address, $code)
+	{
+		$subject = 'oa.com - Activation code';
+		$message = 'Ваш новый код активации : ' . $code . "\n";
+		$message .= 'Авторизируйтесь на сайте и введите его в указанное поле.';
+		mail($address, $subject, $message);
+	}
+	
 	public function SendSecurityNotification($address, $username)
 	{
 		$subject = 'oa.com - Security notification';

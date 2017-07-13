@@ -120,7 +120,7 @@ class TemplatesManager
 			else
 			{
 				$data['ISUSERLOGGED'] = '2';
-				$data['EMAIL'] = $auth->EMail();
+				$data['EMAIL'] = $this->auth->EMail();
 			}
 		}
 		else

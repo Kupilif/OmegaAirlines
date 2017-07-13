@@ -34,14 +34,14 @@ class TemplatesData
 		'AUTHORIZATION_FORM_PATH' => SITE_ROOT . '/templates/parts/authorizationform.tpl',
 		'AUTHORIZED_PAGE_PATH' => SITE_ROOT . '/templates/parts/loggeduser.tpl',
 		'UNACTIVATED_PAGE_PATH' => SITE_ROOT . '/templates/parts/unactivateduser.tpl',
-		'QUESTIONS_PATH' => SITE_ROOT . '/ttemplates/parts/questionnaire.tpl',
+		'QUESTIONS_PATH' => SITE_ROOT . '/templates/parts/questionnaire.tpl',
 		'QUESTIONS_RES_PATH' => SITE_ROOT . '/templates/parts/questionnaireres.tpl',
 		
 		'AUTHORIZATION_SCRIPT' => '"' . SITE_ROOT_HTML . '/auth/loguser.php"',
-		'REGISTRATION_SCRIPT' => '"' . SITE_ROOT_HTML . '/reguser.php"',
-		'LOGOUT_SCRIPT' => '"' . SITE_ROOT_HTML . '/logout.php"',
-		'ACTIVATION_SCRIPT' => '"' . SITE_ROOT_HTML . '/activateuser.php"',
-		'RESEND_CODE_SCRIPT' => '"' . SITE_ROOT_HTML . '/resendcode.php"',
+		'REGISTRATION_SCRIPT' => '"' . SITE_ROOT_HTML . '/auth/reguser.php"',
+		'LOGOUT_SCRIPT' => '"' . SITE_ROOT_HTML . '/auth/logout.php"',
+		'ACTIVATION_SCRIPT' => '"' . SITE_ROOT_HTML . '/auth/activateuser.php"',
+		'RESEND_CODE_SCRIPT' => '"' . SITE_ROOT_HTML . '/auth/resendcode.php"',
 		'SAVE_ANSWERS_SCRIPT' => '"' . SITE_ROOT_HTML . '/saveanswers.php"',
 	);
 	

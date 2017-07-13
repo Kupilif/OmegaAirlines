@@ -110,7 +110,7 @@ class DataBaseClient
 		$userInfo = $queryResult->fetch_assoc();
 		
 		$dbencpasswd = $userInfo['passwd'];
-		$encpasswd = sha1($passwd);
+		$encpasswd = $this->MakePasswdHash($userInfo['login'], $passwd, $userInfo['sault']);
 		
 		if ($dbencpasswd == $encpasswd)
 		{
@@ -120,6 +120,75 @@ class DataBaseClient
 		{
 			return NULL;
 		}
+	}
+	
+	public function IsUserExistsWithLogin($login)
+	{
+		$queryResult = $this->db->query("SELECT * FROM `users` WHERE BINARY `login` = '$login'");
+		if ($queryResult === false)
+		{
+			return false;
+		}
+		if ($queryResult->num_rows > 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public function IsUserExistsWithEMail($email)
+	{
+		$queryResult = $this->db->query("SELECT * FROM `users` WHERE `email` = '$email'");
+		if ($queryResult === false)
+		{
+			return false;
+		}
+		if ($queryResult->num_rows > 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public function AddNewUser($hash, $login, $email, $passwd, $sault, $activationCode)
+	{
+		$encpasswd = $this->MakePasswdHash($login, $passwd, $sault);
+		
+		$this->db->query(
+			"INSERT INTO `users` ( `hash` , `login` , `email` , `passwd` , `sault` , `vote` , `activation` ) 
+			VALUES ('$hash', '$login', '$email', '$encpasswd', '$sault', '0', '$activationCode')"
+		);
+	}
+	
+	public function SetNewActivationCode($login, $activationCode)
+	{
+		$this->db->query("UPDATE `users` SET `activation` = '" . $activationCode ."' WHERE BINARY `login` = '" . $login . "'");
+	}
+	
+	public function IsActivationCodeValid($login, $code)
+	{
+		$queryResult = $this->db->query("SELECT `activation` FROM `users` WHERE BINARY `login` = '" . $login . "'");
+		if ($queryResult === false)
+		{
+			return false;
+		}
+		if ($queryResult->num_rows != 1)
+		{
+			return false;
+		}
+		$elem = $queryResult->fetch_assoc();
+		return ($elem['activation'] == $code);
+	}
+	
+	public function ActivateUser($login)
+	{
+		$this->db->query("UPDATE `users` SET `activation` = 'ACTIVATED' WHERE BINARY `login` = '" . $login . "'");
 	}
 	
 	public function UpdateUserHash($username, $hash)
@@ -142,5 +211,25 @@ class DataBaseClient
 		
 		$elem = $queryResult->fetch_assoc();
 		return $elem['vote'] == '1';
+	}
+	
+	private function MakePasswdHash($login, $passwd, $sault)
+	{
+		$enclogin = sha1($login);
+		$encpasswd = sha1($passwd);
+		$mixed = '';
+		for ($i = 0; $i < strlen($enclogin); $i++)
+		{
+			$mixed .= $enclogin{$i} . $encpasswd{$i};
+		}
+		$hash = sha1($mixed);
+		
+		$mixed = '';
+		for ($i = 0; $i < strlen($sault); $i++)
+		{
+			$mixed .= $hash{$i} . $sault{$i};
+		}
+		$hash = sha1($mixed);
+		return $hash;
 	}
 }

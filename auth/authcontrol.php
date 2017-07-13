@@ -84,19 +84,12 @@ class AuthorizationControl
 		return $res;
 	}
 	
-	public function AuthorizeUser($login, $passwd, $recaptchaResponse, $rememberUser)
+	public function AuthorizeUser($login, $passwd, $rememberUser)
 	{
 		$generator = new PageGenerator();
 		$this->db = new DatabaseClient();
-		$recaptcha = new Recaptcha();
 		$mailSender = new MailSender();
-		
-		if (!$recaptcha->IsValid($recaptchaResponse))
-		{
-			echo $generator->GetErrorPage('Вы – робот!', SITE_ROOT_HTML . '/index.php?page=authorization');
-			exit(1);
-		}
-		
+
 		try
 		{
 			$this->db->Connect();
@@ -111,6 +104,7 @@ class AuthorizationControl
 		if ($userInfo === NULL)
 		{
 			echo $generator->GetErrorPage('Неверное имя пользователя или пароль!', SITE_ROOT_HTML . '/index.php?page=authorization');
+			$this->db->Disconnect();
 			exit(1);
 		}	
 		
@@ -135,6 +129,157 @@ class AuthorizationControl
 		}
 		
 		$this->db->Disconnect();
+		header('Location: ' . SITE_ROOT_HTML . '/index.php?page=authorization');
+	}
+	
+	public function RegisterUser($login, $email, $passwd1, $passwd2, $recaptchaResponse)
+	{
+		$generator = new PageGenerator();
+		$this->db = new DatabaseClient();
+		$mailSender = new MailSender();
+		$recaptcha = new Recaptcha();
+		
+		if (!$recaptcha->IsValid($recaptchaResponse))
+		{
+			echo $generator->GetErrorPage('Вы – робот!', SITE_ROOT_HTML . '/index.php?page=authorization');
+			exit(1);
+		}
+
+		try
+		{
+			$this->db->Connect();
+		}
+		catch (Excetion $e)
+		{
+			echo $generator->GetErrorPage('Не удалось подключиться к базе данных!', SITE_ROOT_HTML . '/index.php?page=authorization');
+			exit(1);
+		}
+		
+		if (strcmp($passwd1, $passwd2) != 0)
+		{
+			echo $generator->GetErrorPage('Пароли не совпадают!', SITE_ROOT_HTML . '/index.php?page=authorization');
+			$this->db->Disconnect();
+			exit(1);
+		}
+		
+		if ($this->db->IsUserExistsWithLogin($login))
+		{
+			echo $generator->GetErrorPage('Пользователь с таким логином уже существует!', SITE_ROOT_HTML . '/index.php?page=authorization');
+			$this->db->Disconnect();
+			exit(1);
+		}
+		
+		if ($this->db->IsUserExistsWithEMail($email))
+		{
+			echo $generator->GetErrorPage('Пользователь с таким email уже существует!', SITE_ROOT_HTML . '/index.php?page=authorization');
+			$this->db->Disconnect();
+			exit(1);
+		}
+		
+		$hash = $this->GetRandomHash(50);
+		$sault = $this->GetRandomHash(50);
+		$activationCode = $this->GetRandomHash(50);
+		
+		if (NEED_ACCOUNT_ACTIVATION)
+		{
+			if (!$mailSender->SendActivationEMail($email, $activationCode))
+			{
+				echo $generator->GetErrorPage('Неверый email!', SITE_ROOT_HTML . '/index.php?page=authorization');
+				$this->db->Disconnect();
+				exit(1);
+			}
+			
+			$this->db->AddNewUser($hash, $login, $email, $passwd1, $sault, $activationCode);
+			$_SESSION['isUserActivated'] = false;
+		}
+		else
+		{
+			$this->db->AddNewUser($hash, $login, $email, $passwd1, $sault, $activationCode);
+			$this->db->ActivateUser($login);
+			$_SESSION['isUserActivated'] = true;
+		}
+		
+		$_SESSION['isUserLogged'] = true;
+		$_SESSION['username'] = $login;
+		$_SESSION['email'] = $email;
+		
+		$this->db->Disconnect();
+		header('Location: ' . SITE_ROOT_HTML . '/index.php?page=authorization');
+	}
+	
+	public function ActivateUser($activationCode)
+	{
+		if ($this->IsUserAuthorized())
+		{
+			$generator = new PageGenerator();
+			$this->db = new DatabaseClient();
+			
+			try
+			{
+				$this->db->Connect();
+			}
+			catch (Excetion $e)
+			{
+				echo $generator->GetErrorPage('Не удалось подключиться к базе данных!', SITE_ROOT_HTML . '/index.php?page=authorization');
+				exit(1);
+			}
+			
+			if ($this->db->IsActivationCodeValid($this->Username(), $activationCode))
+			{
+				$_SESSION['isUserActivated'] = true;
+				$this->db->ActivateUser($this->Username());
+				$this->db->Disconnect();
+				header('Location: ' . SITE_ROOT_HTML . '/index.php?page=authorization');
+			}
+			else
+			{
+				$this->db->Disconnect();
+				echo $generator->GetErrorPage('Неверый код активации!', SITE_ROOT_HTML . '/index.php?page=authorization');
+			}
+		}
+		else
+		{
+			header('Location: ' . SITE_ROOT_HTML . '/index.php?page=authorization');
+		}
+	}
+	
+	public function LogoutUser()
+	{
+		if ($this->IsUserAuthorized())
+		{
+			unset($_SESSION['username']);
+			$_SESSION['isUserLogged'] = false;
+			if (isset($_COOKIE['oaAuth']))
+			{
+				setcookie('oaAuth', '', time() - 60, '/');
+			}
+		}
+		header('Location: ' . SITE_ROOT_HTML . '/index.php?page=authorization');
+	}
+	
+	public function ResendActivationCode()
+	{
+		if ($this->IsUserAuthorized())
+		{
+			$generator = new PageGenerator();
+			$this->db = new DatabaseClient();
+			$mailSender = new MailSender();
+			
+			try
+			{
+				$this->db->Connect();
+			}
+			catch (Excetion $e)
+			{
+				echo $generator->GetErrorPage('Не удалось подключиться к базе данных!', SITE_ROOT_HTML . '/index.php?page=authorization');
+				exit(1);
+			}
+			
+			$newCode = $this->GetRandomHash(50);
+			$this->db->SetNewActivationCode($this->Username(), $newCode);
+			$mailSender->ResendActivationCode($this->EMail(), $newCode);
+			$this->db->Disconnect();
+		}
 		header('Location: ' . SITE_ROOT_HTML . '/index.php?page=authorization');
 	}
 	
@@ -169,7 +314,6 @@ class AuthorizationControl
 		
 		$newHash = $this->UpdateHash($userInfo['login']);
 		setcookie('oaAuth', $newHash, time() + 30 * 24 * 60 * 60, '/');
-		
 		
 		$this->db->Disconnect();
 		

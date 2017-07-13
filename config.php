@@ -6,5 +6,6 @@ define('SERVER', 'localhost');
 define('USER', 'root');
 define('PASSWORD', '2019755');
 define('BASE', 'site');
-define('NEED_SECURITY_EMAIL', true);
+define('NEED_SECURITY_EMAIL', false);
+define('NEED_ACCOUNT_ACTIVATION', true);
 
