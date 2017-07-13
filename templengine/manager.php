@@ -156,47 +156,68 @@ class TemplatesManager
 	
 	private function GetDataForDocumentsPage()
 	{
-		$data['TITLE'] = 'Документы';
-		$data['PAGE_NUM'] = '5';
+		if ($this->auth->IsUserAuthorized())
+		{
+			$data['TITLE'] = 'Документы';
+			$data['PAGE_NUM'] = '5';
 		
-		$storage = new StorageManager();
-		$data['FILES'] = $storage->GetFilesList();
+			$storage = new StorageManager();
+			$data['FILES'] = $storage->GetFilesList();
 	
-		return $data;
+			return $data;
+		}
+		else
+		{
+			header('Location: ' . SITE_ROOT_HTML . '/index.php?page=authorization');
+		}
 	}
 	
 	private function GetQuestinnaire()
 	{
-		if ($this->auth->IsUserVoted())
+		if ($this->auth->IsUserAuthorized())
 		{
-			return $this->GetResultsOfQuestinnaire();
+			if ($this->auth->IsUserVoted())
+			{
+				return $this->GetResultsOfQuestinnaire();
+			}
+			else
+			{
+				return TemplatesData::$data_questions;
+			}
 		}
 		else
 		{
-			return TemplatesData::$data_questions;
+			header('Location: ' . SITE_ROOT_HTML . '/index.php?page=authorization');
 		}
 	}
 	
 	private function GetResultsOfQuestinnaire()
 	{
-		$res = TemplatesData::$data_questions;
-		$res['TITLE'] = 'Результаты';
-		$res['ACTION'] = '2';
+		if ($this->auth->IsUserAuthorized())
+		{
+			$res = TemplatesData::$data_questions;
+			$res['TITLE'] = 'Результаты';
+			$res['ACTION'] = '2';
 		
-		try
-		{
-			$this->db->Connect();
-			for ($i = 1; $i <= count(TemplatesData::$question_names); $i++)
+			try
 			{
-				$this->db->GetQuestionAnswers(TemplatesData::$question_names[$i - 1], $i, $res);
+				$this->db->Connect();
+				for ($i = 1; $i <= count(TemplatesData::$question_names); $i++)
+				{
+					$this->db->GetQuestionAnswers(TemplatesData::$question_names[$i - 1], $i, $res);
+				}
 			}
-		}
-		catch(Excption $e) { }
-		finally
-		{
-			$this->db->Disconnect();
-		}
+			catch(Excption $e) { }
+			finally
+			{
+				$this->db->Disconnect();
+			}
 
-		return $res;
+			return $res;
+		}
+		else
+		{
+			header('Location: ' . SITE_ROOT_HTML . '/index.php?page=authorization');
+		}
 	}
 }

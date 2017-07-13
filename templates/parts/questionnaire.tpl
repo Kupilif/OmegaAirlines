@@ -1,5 +1,5 @@
 <div class="content_text" align={CONFIG="QUESTIONS_ALIGN"} color={CONFIG="MAIN_COLOR"}>
-	<form action="saveanswers.php" method="post" enctype="multipart/form-data">
+	<form action={COMMON="SAVE_ANSWERS_SCRIPT"} method="post" enctype="multipart/form-data">
 		<{CONFIG="QUESTION_FORMAT"}>{VAR="Q1"}</{CONFIG="QUESTION_FORMAT"}>
 		<p style="font-size: {CONFIG="ANSWER_SIZE"}"><input type="radio" checked value="0" name="{VAR="Q1_NAME"}">{VAR="Q1_1"}</p>
 		<p style="font-size: {CONFIG="ANSWER_SIZE"}"><input type="radio" value="1" name="{VAR="Q1_NAME"}">{VAR="Q1_2"}</p>

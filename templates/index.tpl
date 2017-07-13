@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
-{FILE="templates/parts/head.tpl"}
+{FILE="{COMMON="HEAD_PATH"}"}
 <body>
 	<div class="main">
 
-		{FILE="templates/parts/banner.tpl"}
+		{FILE="{COMMON="BANNER_PATH"}"}
 	
-		{FILE="templates/parts/menu.tpl"}
+		{FILE="{COMMON="MENU_PATH"}"}
 			
 		<div class="content">
 			<div class="indent">
@@ -38,7 +38,7 @@
 			</div>
 		</div>
 		
-		{FILE="templates/parts/footer.tpl"}
+		{FILE="{COMMON="FOOTER_PATH"}"}
 		
 	</div>
   

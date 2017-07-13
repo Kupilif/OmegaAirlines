@@ -23,11 +23,26 @@ class TemplatesData
 		'CURRENCY_PAGE_NAME' => 'Курсы валют',
 		'AUTHORIZATION_PAGE_NAME' => 'Авторизация',
 		'COPYRIGHT' => '&copyOmegaAirlines 2017, RD TC',
+		
 		'STYLES' => '"' . SITE_ROOT_HTML . '/styles/style.css"',
+		
 		'HEAD_PATH' => SITE_ROOT . '/templates/parts/head.tpl',
 		'BANNER_PATH' => SITE_ROOT . '/templates/parts/banner.tpl',
 		'MENU_PATH' => SITE_ROOT . '/templates/parts/menu.tpl',
 		'FOOTER_PATH' => SITE_ROOT . '/templates/parts/footer.tpl',
+		'REGISTRATION_FORM_PATH' => SITE_ROOT . '/templates/parts/registrationform.tpl',
+		'AUTHORIZATION_FORM_PATH' => SITE_ROOT . '/templates/parts/authorizationform.tpl',
+		'AUTHORIZED_PAGE_PATH' => SITE_ROOT . '/templates/parts/loggeduser.tpl',
+		'UNACTIVATED_PAGE_PATH' => SITE_ROOT . '/templates/parts/unactivateduser.tpl',
+		'QUESTIONS_PATH' => SITE_ROOT . '/ttemplates/parts/questionnaire.tpl',
+		'QUESTIONS_RES_PATH' => SITE_ROOT . '/templates/parts/questionnaireres.tpl',
+		
+		'AUTHORIZATION_SCRIPT' => '"' . SITE_ROOT_HTML . '/auth/loguser.php"',
+		'REGISTRATION_SCRIPT' => '"' . SITE_ROOT_HTML . '/reguser.php"',
+		'LOGOUT_SCRIPT' => '"' . SITE_ROOT_HTML . '/logout.php"',
+		'ACTIVATION_SCRIPT' => '"' . SITE_ROOT_HTML . '/activateuser.php"',
+		'RESEND_CODE_SCRIPT' => '"' . SITE_ROOT_HTML . '/resendcode.php"',
+		'SAVE_ANSWERS_SCRIPT' => '"' . SITE_ROOT_HTML . '/saveanswers.php"',
 	);
 	
 	public static $data_index = array (

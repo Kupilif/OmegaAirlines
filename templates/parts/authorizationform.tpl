@@ -1,5 +1,5 @@
 <div align=center>
-	<form name="logUser" action="/oa.com/auth/loguser.php" method="post" >
+	<form name="logUser" action={COMMON="AUTHORIZATION_SCRIPT"} method="post" >
 		<p><input type="text" required name="login" placeholder="Логин или e-mail" size="30%" /></p>
 		<p><input type="password" required name="passwd" placeholder="Пароль" pattern="[\w]{4,}" size="30%" /></p>
 		<p><input type="checkbox" name="rememberUser" value="on" size="30%" />Запомнить меня</p>

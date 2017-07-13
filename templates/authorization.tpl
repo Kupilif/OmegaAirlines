@@ -1,34 +1,34 @@
 <!DOCTYPE html>
 <html>
-{FILE="templates/parts/head.tpl"}
+{FILE="{COMMON="HEAD_PATH"}"}
 <body>
 	<div class="main">
 
-		{FILE="templates/parts/banner.tpl"}
+		{FILE="{COMMON="BANNER_PATH"}"}
 	
-		{FILE="templates/parts/menu.tpl"}
+		{FILE="{COMMON="MENU_PATH"}"}
 			
 		<div class="content">
 			<div class="indent">
 				{IF "{VAR="ISUSERLOGGED"}"=="0"}
-					{FILE="templates/parts/authorizationform.tpl"}
+					{FILE="{COMMON="AUTHORIZATION_FORM_PATH"}"}
 				
 					<div class="delim_empty"></div>
 					<hr align="{CONFIG="HR_ALIGN"}" width="{CONFIG="AUTHORIZATION_HR_WIDTH"}" size="{CONFIG="HR_SIZE"}" color="{CONFIG="MAIN_COLOR"}" />
 					<div class="delim_empty"></div>
 				
-					{FILE="templates/parts/registrationform.tpl"}
+					{FILE="{COMMON="REGISTRATION_FORM_PATH"}"}
 				{ENDIF}
 				{IF "{VAR="ISUSERLOGGED"}"=="1"}
-					{FILE="templates/parts/loggeduser.tpl"}
+					{FILE="{COMMON="AUTHORIZED_PAGE_PATH"}"}
 				{ENDIF}
 				{IF "{VAR="ISUSERLOGGED"}"=="2"}
-					{FILE="templates/parts/unactivateduser.tpl"}
+					{FILE="{COMMON="UNACTIVATED_PAGE_PATH"}"}
 				{ENDIF}
 			</div>
 		</div>
 		
-		{FILE="templates/parts/footer.tpl"}
+		{FILE="{COMMON="FOOTER_PATH"}"}
 		
 	</div>
   
