@@ -18,12 +18,7 @@ class TemplatesManager
 		$this->auth = new AuthorizationControl();
 		$this->db = new DatabaseClient();
 	}
-	
-	public function GetQuestionNames()
-	{
-		return TemplatesData::$question_names;
-	}
-	
+
 	public function GetErrorPageInfo($message, $link, &$pagePath, &$pageData, &$commonData)
 	{
 		$pagePath = SITE_ROOT . '/templates/error.tpl';

@@ -213,6 +213,33 @@ class DataBaseClient
 		return $elem['vote'] == '1';
 	}
 	
+	public function GetQuestionResults($question)
+	{
+		$queryResult = $this->db->query("SELECT `results` FROM `questionnaire` WHERE `question` = '" . $question . "'");
+		if ($queryResult === false)
+		{
+			return false;
+		}
+		
+		if ($queryResult->num_rows != 1)
+		{
+			return false;
+		}
+		
+		$elem = $queryResult->fetch_assoc();
+		return $elem['results'];
+	}
+	
+	public function SetQuestionResults($question, $answers)
+	{
+		$this->db->query("UPDATE `questionnaire` SET `results` = '" . $answers ."' WHERE `question` = '" . $question . "'");
+	}
+	
+	public function NoteUserVote($username)
+	{
+		$this->db->query("UPDATE `users` SET `vote` = 1 WHERE BINARY `login` = '" . $username . "'");
+	}
+	
 	private function MakePasswdHash($login, $passwd, $sault)
 	{
 		$enclogin = sha1($login);

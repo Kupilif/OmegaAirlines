@@ -42,7 +42,7 @@ class TemplatesData
 		'LOGOUT_SCRIPT' => '"' . SITE_ROOT_HTML . '/auth/logout.php"',
 		'ACTIVATION_SCRIPT' => '"' . SITE_ROOT_HTML . '/auth/activateuser.php"',
 		'RESEND_CODE_SCRIPT' => '"' . SITE_ROOT_HTML . '/auth/resendcode.php"',
-		'SAVE_ANSWERS_SCRIPT' => '"' . SITE_ROOT_HTML . '/saveanswers.php"',
+		'SAVE_ANSWERS_SCRIPT' => '"' . SITE_ROOT_HTML . '/questions/saveanswers.php"',
 	);
 	
 	public static $data_index = array (
