@@ -157,7 +157,7 @@ class TemplatesManager
 			$data['PAGE_NUM'] = '5';
 		
 			$storage = new StorageManager();
-			$data['FILES'] = $storage->GetFilesList();
+			$data['FILES'] = $storage->GetFilesList($this->auth->Username());
 	
 			return $data;
 		}

@@ -11,7 +11,7 @@
 		<div class="content">
 			
 			<div align=center>
-				<form action="uploadfile.php" method="post" enctype="multipart/form-data">
+				<form action={COMMON="UPLOAD_FILE_SCRIPT"} method="post" enctype="multipart/form-data">
 					<input  type="file" name="uploadfile" required style="width: {CONFIG="DOCS_FILELOAD_WIDTH"}">
 					<input type="submit" value="Загрузить">
 				</form>
