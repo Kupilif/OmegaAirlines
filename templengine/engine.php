@@ -1,6 +1,6 @@
 <?php
 
-include_once $_SERVER['DOCUMENT_ROOT'] . '/oa.com/config.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
 include_once SITE_ROOT . '/database/dbclient.php';
 
@@ -23,7 +23,7 @@ class TemplatesEngine
 	
 	public function __construct()
 	{
-		$this->configFilePath = $_SERVER['DOCUMENT_ROOT'] . '/oa.com/templengine/config.txt';
+		$this->configFilePath = SITE_ROOT . '/templengine/config.txt';
 	}
 	
 	/* Генерация страницы */

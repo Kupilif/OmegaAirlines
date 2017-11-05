@@ -1,6 +1,6 @@
 <?php
 
-include_once $_SERVER['DOCUMENT_ROOT'] . '/oa.com/config.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
 include_once SITE_ROOT . '/templengine/manager.php';
 include_once SITE_ROOT . '/templengine/engine.php';

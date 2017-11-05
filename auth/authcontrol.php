@@ -1,6 +1,6 @@
 <?php
 
-include_once $_SERVER['DOCUMENT_ROOT'] . '/oa.com/config.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
 include_once SITE_ROOT . '/database/dbclient.php';
 include_once SITE_ROOT . '/templengine/generator.php';
@@ -138,12 +138,13 @@ class AuthorizationControl
 		$this->db = new DatabaseClient();
 		$mailSender = new MailSender();
 		$recaptcha = new Recaptcha();
-		
-		if (!$recaptcha->IsValid($recaptchaResponse))
-		{
-			echo $generator->GetErrorPage('Вы – робот!', SITE_ROOT_HTML . '/index.php?page=authorization');
-			exit(1);
-		}
+
+		if (NEED_RECAPTCHA_CHECK) {
+            if (!$recaptcha->IsValid($recaptchaResponse)) {
+                echo $generator->GetErrorPage('Вы – робот!', SITE_ROOT_HTML . '/index.php?page=authorization');
+                exit(1);
+            }
+        }
 
 		try
 		{

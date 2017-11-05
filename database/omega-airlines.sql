@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.6
--- https://www.phpmyadmin.net/
+-- version 4.5.4.1deb2ubuntu2
+-- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Июл 13 2017 г., 15:08
--- Версия сервера: 5.7.17-log
--- Версия PHP: 7.1.2
+-- Время создания: Ноя 05 2017 г., 18:35
+-- Версия сервера: 5.7.19-0ubuntu0.16.04.1
+-- Версия PHP: 7.1.8-2+ubuntu16.04.1+deb.sury.org+4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- База данных: `site`
+-- База данных: `omega-airlines`
 --
 
 -- --------------------------------------------------------
@@ -49,32 +49,6 @@ INSERT INTO `description` (`name`, `value`) VALUES
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `lab5`
---
-
-CREATE TABLE `lab5` (
-  `login` varchar(50) NOT NULL,
-  `passwd` varchar(50) NOT NULL,
-  `login_sha1` varchar(40) NOT NULL,
-  `passwd_sha1` varchar(40) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Дамп данных таблицы `lab5`
---
-
-INSERT INTO `lab5` (`login`, `passwd`, `login_sha1`, `passwd_sha1`) VALUES
-('ZONK', 'qwerty', 'e71bdcf3d8216d588d554690cc22b45001e86ba6', 'b1b3773a05c0ed0176787a4f1574ff0075f7521e'),
-('WAFF', 'q1w2e3r4', '4dbac436981f87a90a9aa7f06bcc6d353f5f0e5e', '1fc854110e5532480000542834f453de31936c2f'),
-('Yusha', 'ProTanki', 'a030ff5d8c12c65d45ecb1a72db4fdf4a07ab3dd', '744408e2e847e8445f88632e38217b268039509f'),
-('kupilif', '1234', '36eafed7032db6efea9b9664dcf23570f869d07b', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220'),
-('User1', '1234', '4146594c9c6ac5407a3123560401170c2756a342', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220'),
-('User2', '12345678', '5d731241e892a0e3b7a9c701d65d176830b709cc', '7c222fb2927d828af22f592134e8932480637c0d'),
-('User3', '12345', '325ef576f8066a46818c91ef3bbd0db7b2c40b66', '8cb2237d0679ca88db6464eac60da96345513964');
-
--- --------------------------------------------------------
-
---
 -- Структура таблицы `questionnaire`
 --
 
@@ -88,12 +62,12 @@ CREATE TABLE `questionnaire` (
 --
 
 INSERT INTO `questionnaire` (`question`, `results`) VALUES
-('gender', '27-7'),
-('age', '24-1-6-0-3'),
-('amount', '25-2-7'),
-('flight', '27-3-2-2'),
-('service', '27-2-2-3'),
-('site', '27-2-1-4');
+('gender', '27-7-'),
+('age', '24-1-6-0-3-'),
+('amount', '25-2-7-'),
+('flight', '27-3-2-2-'),
+('service', '27-2-2-3-'),
+('site', '27-2-1-4-');
 
 -- --------------------------------------------------------
 
@@ -116,10 +90,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`hash`, `login`, `email`, `passwd`, `sault`, `vote`, `activation`) VALUES
-('d71ff41e88391d3d5d54b33df2e0df04ee139fbb', 'user1', 'user1@example.com', '7b71b76f4d0692fa1b5f25f980f4ca94dffc4757', '38a893bdb5b717adcf2dfc0307cf8959bd971a1c', 0, 'ACTIVATED'),
-('951dc14660057e1330fd1f8d33eed86ce3d7427a', 'user2', 'user2@example.com', 'de03baeffc80f05030f1983b6d19e589722c7efa', '84950e415f769dfc623cdbe1df093af983e457aa', 0, 'ACTIVATED'),
-('b73cc2d14a2585c43a54910585ff3ac8c7a952e2', 'user3', 'user3@exmple.com', '47783c4b3aced0b0a88cb02f59a57e3b74b76ceb', '76d2786f2694d4bdd4c4d696f2ed7dd2a272bfe2', 0, 'ACTIVATED'),
-('71198c430ca196d252308452646029e821bec116', 'Kupilif', 'user-root@inbox.ru', 'd1fea91f7e29942e615bc64ff1115e9b05107a4a', '967bd9ed2ad24707cac79dac622b131ac3e187ee', 0, 'ACTIVATED');
+('c206bdd159c1520ca1d012aa58a2dd2263057886', 'user1', 'user1@mailinator.com', '8d83365a0068ab9305ac8fc238e16f5eaf743309', 'f39684b49a488f75dbfedf6e78a1ac1f7b2c0971', 1, 'ACTIVATED');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
